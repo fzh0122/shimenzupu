@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>师门关系</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f4f1ea; 
+            font-family: system-ui, -apple-system, sans-serif;
+            color: #3d2f20; overflow: hidden; height: 100vh;
+            display: flex; flex-direction: column;
+            touch-action: manipulation;
+        }
+        .app-bar { padding: 1rem; background: #e8e2d6; border-bottom: 1px solid #d4cbb7; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; }
+        .legend span { display: flex; align-items: center; gap: 4px; }
+        .dot { width: 16px; height: 3px; border-radius: 1px; display: inline-block; }
+        .search-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        input[type="text"] { flex: 1; padding: 8px 12px; border: 1px solid #c9bfa9; border-radius: 6px; outline: none; background: #fffaf5; }
+        .btn { padding: 8px 14px; border-radius: 6px; border: 1px solid #c9bfa9; background: #fff; cursor: pointer; font-size: 13px; transition: 0.2s; }
+        .btn:hover { background: #fdfaf0; border-color: #7c5d42; }
+        .btn-primary { background: #7c5d42; color: #fff; border: none; }
+        .btn-primary:hover { background: #5c4033; }
+        .canvas-container { flex: 1; position: relative; overflow: hidden; cursor: grab; }
+        .canvas-container:active { cursor: grabbing; }
+        canvas { display: block; touch-action: none; image-rendering: high-quality; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: #fff; padding: 25px; border-radius: 12px; width: 90%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-content h3 { margin-bottom: 15px; font-size: 18px; color: #5c4033; }
+        select { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 6px; }
+        .tip { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 11px; color: #9a8e7b; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+<div class="app-bar">
+    <div class="header-top">
+        <h2 style="font-size: 18px;">师门关系</h2>
+        <div class="legend">
+            <span><i class="dot" style="background: #111111;"></i> 正式师徒</span>
+            <span><i class="dot" style="border-top: 3px dashed #111111;"></i> 编外师徒</span>
+            <span><i class="dot" style="background: rgba(179,134,0,0.5);"></i> 结义</span>
+            <span><i class="dot" style="background: rgba(255,77,121,0.5);"></i> 侠缘</span>
+            <span><i class="dot" style="background: rgba(0,102,204,0.5);"></i> 亲友</span>
+        </div>
+    </div>
+    <div class="search-row">
+        <input type="text" id="searchInp" placeholder="输入 ID 快速定位高亮...">
+        <button class="btn btn-primary" id="addNode">➕ 新增门人</button>
+        <button class="btn btn-primary" id="addRel">🔗 建立关系</button>
+        <button class="btn btn-primary" id="saveData">💾 保存数据</button>
+        <button class="btn btn-primary" id="loadData">📂 读取数据</button>
+        <button class="btn" onclick="resetCam()">⟳ 复位视角</button>
+        <button class="btn" style="color:red" onclick="clearData()">🗑️ 清空测试数据</button>
+    </div>
+</div>
+
+<div class="canvas-container" id="container">
+    <canvas id="mainCanvas"></canvas>
+    <div class="tip"><b>|花叶同春，岁岁年年，千秋共颂，你我长青|</b></div>
+</div>
+
+<div id="relModal" class="modal">
+    <div class="modal-content">
+        <h3>🔗 建立/管理关系</h3>
+        <select id="relType">
+            <option value="st">⬛ 师徒实线 (A是B的正式徒弟)</option>
+            <option value="bwst">🟟 编外师徒虚线 (A是B的编外徒弟)</option>
+            <option value="jy">🟨 结义淡土黄实线 (A与B结义)</option>
+            <option value="xy">🟥 侠缘淡桃红实线 (A与B是侠缘)</option>
+            <option value="qy">🟦 亲友淡蓝色实线 (A与B是亲友)</option>
+            <option value="xh">📎 小号依附 (A是B的小号)</option>
+        </select>
+        <div style="display:flex; gap:10px; margin-bottom: 12px;">
+            <div style="flex:1;">
+                <label style="font-size:12px; color:#666;">门人 A：</label>
+                <select id="selA"></select>
+            </div>
+            <div style="flex:1;">
+                <label style="font-size:12px; color:#666;">门人 B：</label>
+                <select id="selB"></select>
+            </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%; margin-top:5px;" onclick="saveRelation()">确认建立</button>
+        <button class="btn" style="width:100%; margin-top:8px; border:none;" onclick="closeModal()">取消</button>
+    </div>
+</div>
+
+<script>
+let nodes = [{"id":"天訁","name":"起飞🛫","avatar":"https://s41.ax1x.com/2026/05/24/pm9dn10.jpg","masterId":null,"mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":288.58855161460343},{"id":"譜天之下","name":"起飞🛫","avatar":"","masterId":null,"mainId":"天訁","bwsts":[],"jys":[],"xys":[],"qys":[]},{"id":"八万春丷","name":"八万春丷","avatar":"https://s41.ax1x.com/2026/05/30/pmkUZfH.jpg","masterId":"天訁","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":73.15789473684217},{"id":"姜闻野","name":"姜闻野","avatar":"https://s41.ax1x.com/2026/05/24/pm9d8AJ.jpg","masterId":"天訁","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":256.75763482781025},{"id":"杏酥仁","name":"杏酥仁","avatar":"https://s41.ax1x.com/2026/05/24/pm9dGN9.jpg","masterId":"天訁","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":429.2462638076674},{"id":"燕山晦明","name":"燕山晦明","avatar":"https://s41.ax1x.com/2026/05/29/pmFkXrV.jpg","masterId":"天訁","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":597.9012345679014},{"id":"江瑜七","name":"江瑜七","avatar":"https://s41.ax1x.com/2026/05/24/pm9dN1x.jpg","masterId":null,"mainId":null,"bwsts":["天訁"],"jys":[],"xys":[],"qys":[],"fixedX":-381.5789473684211},{"id":"虞珂白","name":"虞珂白","avatar":"https://s41.ax1x.com/2026/05/24/pm9dUc6.jpg","masterId":null,"mainId":null,"bwsts":["天訁"],"jys":[],"xys":[],"qys":[],"fixedX":-81.57894736842107},{"id":"沈岁愉","name":"轻涟","avatar":"https://s41.ax1x.com/2026/05/24/pm9d0BD.jpg","masterId":null,"mainId":null,"bwsts":["天訁"],"jys":[],"xys":[],"qys":[],"fixedX":-236.3157894736842},{"id":"|昙梦|","name":"八万昙梦","avatar":"https://s41.ax1x.com/2026/05/29/pmFkzaF.jpg","masterId":null,"mainId":null,"bwsts":["天訁"],"jys":[],"xys":[],"qys":[],"fixedX":826.4610441999935},{"id":"说画","name":"画子","avatar":"https://s41.ax1x.com/2026/05/24/pm9dfu8.jpg","masterId":"八万春丷","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":-84.40291627957758},{"id":"壹前","name":"壹前","avatar":"https://s41.ax1x.com/2026/05/24/pm9dhDS.jpg","masterId":"八万春丷","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":73.00201495133274},{"id":"月落山深","name":"笙笙辞","avatar":"https://s41.ax1x.com/2026/05/24/pm9dIEQ.jpg","masterId":"八万春丷","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":233.6993838198871},{"id":"想画","name":"敌意","avatar":"https://s41.ax1x.com/2026/05/24/pm9dT4s.jpg","masterId":"燕山晦明","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":516.1403508771928},{"id":"祈曜","name":"祈曜","avatar":"https://s41.ax1x.com/2026/05/29/pmFAZVO.jpg","masterId":null,"mainId":null,"bwsts":["燕山晦明"],"jys":[],"xys":[],"qys":[],"fixedX":669.5126705653022},{"id":"淳崽","name":"淳崽","avatar":"https://s41.ax1x.com/2026/05/24/pm9db3q.jpg","masterId":null,"mainId":null,"bwsts":["|昙梦|"],"jys":[],"xys":[],"qys":[],"fixedX":825.1614990407992},{"id":"休葕","name":"休葕","avatar":"https://s41.ax1x.com/2026/05/29/pmFkb2n.jpg","masterId":null,"mainId":null,"bwsts":["天訁"],"jys":[],"xys":[],"qys":[],"fixedX":1010.3244674215607}];
+
+let camera = { x: 50, y: 50, scale: 0.95 };
+let searchKey = "";
+const cvs = document.getElementById('mainCanvas');
+const ctx = cvs.getContext('2d');
+let hitRegions = [];
+let draggedNodeId = null;
+let dragOffsetX = 0;
+let currentDragX = 0;
+let isDraggingNode = false;
+let isDragCanvas = false;
+let startP = { x: 0, y: 0 };
+let lastTouch = {};
+const CARD_W = 120, CARD_H = 80, GAP_X = 100, GAP_Y = 280;
+
+function numToChinese(num) {
+    const arr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+    return arr[num - 1] || num + '';
+}
+
+function solveGenerations(){
+    const gens=new Map();nodes.forEach(n=>gens.set(n.id,0));
+    for(let i=0;i<30;i++){
+        nodes.forEach(n=>{
+            if(n.masterId&&gens.has(n.masterId))gens.set(n.id,gens.get(n.masterId)+1);
+            if(n.bwsts&&n.bwsts.length)n.bwsts.forEach(m=>gens.has(m)&&gens.set(n.id,Math.max(gens.get(n.id),gens.get(m)+1)));
+            if(n.mainId&&gens.has(n.mainId))gens.set(n.id,gens.get(n.mainId));
+        });
+    }
+    for(let i=0;i<10;i++){
+        nodes.forEach(n=>{
+            let p=[...(n.jys||[]),...(n.xys||[]),...(n.qys||[])];
+            p.forEach(pid=>{
+                if(gens.has(pid)){
+                    let g1=gens.get(n.id),g2=gens.get(pid);
+                    if(g1!==g2){let mg=Math.max(g1,g2);gens.set(n.id,mg);gens.set(pid,mg);}
+                }
+            });
+        });
+    }
+    return gens;
+}
+const nodePos=new Map();
+function layoutRecursive(pid,pcx,py){
+    let ch=nodes.filter(x=>x.masterId===pid||(x.bwsts&&x.bwsts.includes(pid)));
+    if(!ch.length)return;
+    let tw=ch.length*(CARD_W+GAP_X)-GAP_X,sx=pcx-tw/2;
+    ch.forEach(c=>{
+        let x=c.fixedX!==undefined?c.fixedX:sx;
+        nodePos.set(c.id,{x:x,y:py+GAP_Y,w:CARD_W,h:CARD_H});
+        layoutRecursive(c.id,x+CARD_W/2,py+GAP_Y);
+        sx+=CARD_W+GAP_X;
+    });
+}
+function layout(){
+    nodePos.clear();
+    if(!nodes.length){draw();return;}
+    let gens=solveGenerations();
+    let root=nodes.filter(x=>!x.mainId&&!x.masterId&&(!x.bwsts||!x.bwsts.length));
+    let realRoot=root.filter(x=>{let p=[...(x.jys||[]),...(x.xys||[]),...(x.qys||[])];return !p.length;});
+    let rx=300;
+    realRoot.forEach(r=>{
+        let x=r.fixedX!==undefined?r.fixedX:rx;
+        nodePos.set(r.id,{x:x,y:120,w:CARD_W,h:CARD_H});
+        layoutRecursive(r.id,x+CARD_W/2,120);
+        rx+=500;
+    });
+    let peer=nodes.filter(x=>!nodePos.has(x.id)&&!x.mainId&&((x.jys?.length||0)+(x.xys?.length||0)+(x.qys?.length||0)>0));
+    peer.forEach(n=>{
+        let g=gens.get(n.id)||0,y=120+g*GAP_Y;
+        if(!nodePos.has(n.id)){let x=n.fixedX!==undefined?n.fixedX:rx;nodePos.set(n.id,{x,y,w:CARD_W,h:CARD_H});rx+=200;}
+    });
+    nodes.forEach(n=>{
+        if(n.mainId&&nodePos.has(n.mainId)&&!nodePos.has(n.id)){
+            let m=nodePos.get(n.mainId);
+            nodePos.set(n.id,{x:m.x+m.w+10,y:m.y+20,w:CARD_W*0.6,h:CARD_H*0.6});
+        }
+    });
+    draw();
+}
+function drawFamilyLine(mid,cids){
+    if(!nodePos.has(mid)||!cids.length)return;
+    let mp=nodePos.get(mid),mx=mp.x+mp.w/2,my=mp.y+mp.h;
+    let ch=cids.filter(id=>nodePos.has(id)).map(id=>{
+        let p=nodePos.get(id),nd=nodes.find(x=>x.id===id);
+        return {
+            id,
+            x:p.x+p.w/2,
+            y:p.y,
+            isBwst: nd.bwsts?.includes(mid) && nd.masterId !== mid
+        };
+    });
+    if(!ch.length)return;
+
+    let sortedAll = [...ch].sort((a,b)=>a.x - b.x);
+    let formalList = sortedAll.filter(item => !item.isBwst);
+    let rankMap = {};
+    formalList.forEach((item, idx) => {
+        let text;
+        if(idx === 0) text = "大徒弟";
+        else if(idx === formalList.length - 1) text = "小徒弟";
+        else text = numToChinese(idx + 1) + "徒弟";
+        rankMap[item.id] = text;
+    });
+
+    if(ch.length===1){
+        let c=ch[0];
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash(c.isBwst?[4,4]:[]);
+        ctx.lineWidth=c.isBwst?1.5:2.2;
+        ctx.strokeStyle='#111';
+        ctx.moveTo(mx,my);
+        ctx.lineTo(c.x,c.y);
+        ctx.stroke();
+
+        if(!c.isBwst && rankMap[c.id]){
+            const text = rankMap[c.id];
+            const centerY = (my + c.y) / 2;
+            const textX = c.x + 25;
+            ctx.fillStyle = '#7c5d42';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'left';
+            for(let i = 0; i < text.length; i++){
+                ctx.fillText(text[i], textX, centerY - (text.length / 2 - i) * 16);
+            }
+        }
+        ctx.restore();
+        return;
+    }
+
+    let cy=ch[0].y,hy=cy-80,minx=Math.min(...ch.map(c=>c.x)),maxx=Math.max(...ch.map(c=>c.x));
+    ctx.save();
+    ctx.lineWidth=2.2;
+    ctx.strokeStyle='#111';
+    ctx.beginPath();
+    ctx.moveTo(mx,my);
+    ctx.lineTo(mx,hy);
+    ctx.lineTo((minx+maxx)/2,hy);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(minx,hy);
+    ctx.lineTo(maxx,hy);
+    ctx.stroke();
+
+    ch.forEach(c=>{
+        ctx.beginPath();
+        ctx.setLineDash(c.isBwst?[4,4]:[]);
+        ctx.lineWidth=c.isBwst?1.5:2.2;
+        ctx.moveTo(c.x,hy);
+        ctx.lineTo(c.x,c.y);
+        ctx.stroke();
+
+        if(!c.isBwst && rankMap[c.id]){
+            const text = rankMap[c.id];
+            const centerY = (hy + c.y) / 2;
+            const textX = c.x + 25;
+            ctx.fillStyle = '#7c5d42';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'left';
+            for(let i = 0; i < text.length; i++){
+                ctx.fillText(text[i], textX, centerY - (text.length / 2 - i) * 16);
+            }
+        }
+    });
+    ctx.restore();
+}
+function drawSecRel(){
+    let gens=solveGenerations();
+    nodes.forEach(n=>{
+        let p=nodePos.get(n.id);if(!p)return;
+        let cx1=p.x+p.w/2,cy1=p.y+p.h/2;
+        if(n.jys)n.jys.forEach(j=>{
+            if(j>n.id&&gens.get(j)===gens.get(n.id)&&nodePos.has(j)){
+                let tp=nodePos.get(j),cx2=tp.x+tp.w/2,cy2=tp.y+tp.h/2;
+                ctx.beginPath();ctx.strokeStyle='rgba(179,134,0,0.6)';ctx.lineWidth=2;
+                let ctrY=Math.max(cy1,cy2)+80;
+                ctx.moveTo(cx1,cy1+20);ctx.quadraticCurveTo((cx1+cx2)/2,ctrY,cx2,cy2+20);ctx.stroke();
+            }
+        });
+        if(n.xys)n.xys.forEach(x=>{
+            if(x>n.id&&gens.get(x)===gens.get(n.id)&&nodePos.has(x)){
+                let tp=nodePos.get(x),cx2=tp.x+tp.w/2,cy2=tp.y+tp.h/2;
+                ctx.beginPath();ctx.strokeStyle='rgba(255,77,121,0.6)';ctx.lineWidth=2;
+                let ctrY=Math.max(cy1,cy2)+80;
+                ctx.moveTo(cx1,cy1+20);ctx.quadraticCurveTo((cx1+cx2)/2,ctrY,cx2,cy2+20);ctx.stroke();
+            }
+        });
+        if(n.qys)n.qys.forEach(q=>{
+            if(q>n.id&&gens.get(q)===gens.get(n.id)&&nodePos.has(q)){
+                let tp=nodePos.get(q),cx2=tp.x+tp.w/2,cy2=tp.y+tp.h/2;
+                ctx.beginPath();ctx.strokeStyle='rgba(0,102,204,0.6)';ctx.lineWidth=2;
+                let ctrY=Math.max(cy1,cy2)+80;
+                ctx.moveTo(cx1,cy1+20);ctx.quadraticCurveTo((cx1+cx2)/2,ctrY,cx2,cy2+20);ctx.stroke();
+            }
+        });
+    });
+}
+function draw(){
+    hitRegions=[];ctx.clearRect(0,0,cvs.width,cvs.height);
+    ctx.save();ctx.translate(camera.x,camera.y);ctx.scale(camera.scale,camera.scale);
+    let mg=new Map();
+    nodes.forEach(n=>{
+        if(n.masterId){if(!mg.has(n.masterId))mg.set(n.masterId,[]);mg.get(n.masterId).push(n.id);}
+        if(n.bwsts&&n.bwsts.length)n.bwsts.forEach(b=>{if(!mg.has(b))mg.set(b,[]);if(!mg.get(b).includes(n.id))mg.get(b).push(n.id);});
+    });
+    mg.forEach((cids,mid)=>drawFamilyLine(mid,cids));
+    drawSecRel();
+    nodePos.forEach((pos,id)=>{
+        let n=nodes.find(x=>x.id===id);if(!n)return;
+        let rx=pos.x;
+        if(isDraggingNode&&draggedNodeId===id&&!n.mainId)rx=currentDragX;
+        let sel=searchKey&&n.id.includes(searchKey),small=!!n.mainId;
+        ctx.save();ctx.shadowBlur=draggedNodeId===id?18:4;ctx.shadowColor='rgba(0,0,0,0.08)';
+        ctx.fillStyle='#fff';ctx.beginPath();ctx.roundRect(rx,pos.y,pos.w,pos.h,10);ctx.fill();
+        if(sel){ctx.strokeStyle='#ff4d79';ctx.lineWidth=3;ctx.stroke();}
+        ctx.shadowBlur=0;
+        let avs=small?22:36,avx=rx+pos.w/2-avs/2,avy=pos.y+8;
+        if(n.avatar){
+            let img=new Image();img.src=n.avatar;
+            ctx.save();ctx.beginPath();ctx.arc(avx+avs/2,avy+avs/2,avs/2,0,Math.PI*2);ctx.clip();
+            ctx.drawImage(img,avx,avy,avs,avs);ctx.restore();
+        }else{
+            ctx.beginPath();ctx.arc(avx+avs/2,avy+avs/2,avs/2,0,Math.PI*2);ctx.fillStyle='#ddd';ctx.fill();
+        }
+        let cx=rx+pos.w/2,by=small?pos.y+48:pos.y+56;
+        ctx.fillStyle='#3d2f20';ctx.font=`bold ${small?9:13}px sans-serif`;ctx.textAlign='center';ctx.fillText(n.id,cx,by);
+        ctx.fillStyle='#888';ctx.font=`${small?8:11}px sans-serif`;ctx.fillText(n.name||'-',cx,by+14);
+        ctx.strokeStyle='#e2dbcd';ctx.lineWidth=1;ctx.stroke();
+        if(!small){
+            ctx.font='10px serif';ctx.fillText('✏️',rx+15,pos.y+pos.h-12);
+            ctx.fillText('🗑️',rx+pos.w-15,pos.y+pos.h-12);
+        }
+        ctx.restore();
+        hitRegions.push({id:n.id,x:rx,y:pos.y,w:pos.w,h:pos.h});
+    });
+    ctx.restore();
+}
+
+cvs.onmousedown=e=>{
+    let rect=cvs.getBoundingClientRect();
+    let mx=(e.clientX-rect.left-camera.x)/camera.scale;
+    let my=(e.clientY-rect.top-camera.y)/camera.scale;
+    let hit=hitRegions.find(r=>mx>r.x&&mx<r.x+r.w&&my>r.y&&my<r.y+r.h);
+    if(hit){
+        let nd=nodes.find(x=>x.id===hit.id);if(nd&&nd.mainId)return;
+        if(mx>hit.x+hit.w-28&&my>hit.y+hit.h-28){deleteNode(hit.id);return;}
+        if(mx<hit.x+28&&my>hit.y+hit.h-28){editNode(hit.id);return;}
+        draggedNodeId=hit.id;isDraggingNode=true;dragOffsetX=mx-hit.x;currentDragX=hit.x;return;
+    }
+    isDragCanvas=true;startP={x:e.clientX,y:e.clientY};
+};
+window.onmousemove=e=>{
+    if(isDraggingNode&&draggedNodeId){
+        let rect=cvs.getBoundingClientRect();
+        let mx=(e.clientX-rect.left-camera.x)/camera.scale;
+        currentDragX=mx-dragOffsetX;draw();return;
+    }
+    if(isDragCanvas){
+        camera.x+=e.clientX-startP.x;camera.y+=e.clientY-startP.y;
+        startP={x:e.clientX,y:e.clientY};draw();
+    }
+};
+window.onmouseup=()=>{
+    if(isDraggingNode&&draggedNodeId){
+        let pos=nodePos.get(draggedNodeId),nd=nodes.find(x=>x.id===draggedNodeId);
+        if(pos&&nd){pos.x=currentDragX;nd.fixedX=currentDragX;}
+    }
+    isDraggingNode=false;isDragCanvas=false;draw();
+};
+cvs.onwheel=e=>{
+    e.preventDefault();let d=e.deltaY>0?0.9:1.1;
+    camera.scale=Math.max(0.15,Math.min(3,camera.scale*d));draw();
+};
+
+cvs.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const rect = cvs.getBoundingClientRect();
+    const touches = e.touches;
+
+    if (touches.length === 1) {
+        const x = touches[0].clientX;
+        const y = touches[0].clientY;
+        const mx = (x - rect.left - camera.x) / camera.scale;
+        const my = (y - rect.top - camera.y) / camera.scale;
+        lastTouch = { x, y };
+        const hit = hitRegions.find(r => mx > r.x && mx < r.x + r.w && my > r.y && my < r.y + r.h);
+        if (hit) return;
+        isDragCanvas = true;
+    }
+    if (touches.length === 2) {
+        const d = Math.hypot(
+            touches[0].clientX - touches[1].clientX,
+            touches[0].clientY - touches[1].clientY
+        );
+        lastTouch.dist = d;
+    }
+});
+
+cvs.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const touches = e.touches;
+    if (touches.length === 1 && isDragCanvas) {
+        const x = touches[0].clientX;
+        const y = touches[0].clientY;
+        camera.x += x - lastTouch.x;
+        camera.y += y - lastTouch.y;
+        lastTouch = { x, y };
+        draw();
+    }
+    if (touches.length === 2) {
+        const d = Math.hypot(
+            touches[0].clientX - touches[1].clientX,
+            touches[0].clientY - touches[1].clientY
+        );
+        const scale = d / lastTouch.dist;
+        camera.scale = Math.max(0.15, Math.min(3, camera.scale * scale));
+        lastTouch.dist = d;
+        draw();
+    }
+});
+
+cvs.addEventListener('touchend', e => {
+    isDragCanvas = false;
+    lastTouch = {};
+});
+
+document.getElementById('addNode').onclick=()=>{
+    let id=prompt("输入ID");if(!id)return;
+    if(nodes.some(x=>x.id===id)){alert("ID已存在");return;}
+    let name=prompt("备注")||"";
+    let ava=prompt("头像链接")||"";
+    nodes.push({id,name,avatar:ava,masterId:null,mainId:null,bwsts:[],jys:[],xys:[],qys:[]});
+    layout();
+};
+document.getElementById('addRel').onclick=()=>{
+    if(nodes.length<2){alert("至少添加两人");return;}
+    let a=document.getElementById('selA'),b=document.getElementById('selB');
+    a.innerHTML=b.innerHTML=nodes.map(n=>`<option value="${n.id}">${n.id}</option>`).join('');
+    document.getElementById('relModal').style.display='flex';
+};
+function saveRelation(){
+    let a=document.getElementById('selA').value,b=document.getElementById('selB').value,tp=document.getElementById('relType').value;
+    if(a===b){alert("不能选自身");return;}
+    let na=nodes.find(x=>x.id===a),nb=nodes.find(x=>x.id===b);
+    if(!na.bwsts)na.bwsts=[];if(!na.jys)na.jys=[];if(!na.xys)na.xys=[];if(!na.qys)na.qys=[];
+    if(tp==='st')na.masterId=b;
+    else if(tp==='xh')na.mainId=b;
+    else if(tp==='bwst'&&!na.bwsts.includes(b))na.bwsts.push(b);
+    else if(tp==='jy'){if(!na.jys.includes(b))na.jys.push(b);if(!nb.jys.includes(a))nb.jys.push(a);}
+    else if(tp==='xy'){if(!na.xys.includes(b))na.xys.push(b);if(!nb.xys.includes(a))nb.xys.push(a);}
+    else if(tp==='qy'){if(!na.qys.includes(b))na.qys.push(b);if(!nb.qys.includes(a))nb.qys.push(a);}
+    layout();closeModal();
+}
+function editNode(id){
+    let n=nodes.find(x=>x.id===id);
+    let nm=prompt("修改备注",n.name);
+    let av=prompt("修改头像",n.avatar||"");
+    if(nm!==null)n.name=nm;if(av!==null)n.avatar=av;layout();
+}
+function deleteNode(id){
+    if(!confirm(`删除${id}？`))return;
+    nodes=nodes.filter(x=>x.id!==id);
+    nodes.forEach(n=>{
+        if(n.masterId===id)n.masterId=null;
+        if(n.mainId===id)n.mainId=null;
+        if(n.bwsts)n.bwsts=n.bwsts.filter(x=>x!==id);
+        if(n.jys)n.jys=n.jys.filter(x=>x!==id);
+        if(n.xys)n.xys=n.xys.filter(x=>x!==id);
+        if(n.qys)n.qys=n.qys.filter(x=>x!==id);
+    });
+    layout();
+}
+function closeModal(){document.getElementById('relModal').style.display='none';}
+function resetCam(){camera={x:50,y:50,scale:0.6};draw();}
+function clearData(){if(confirm("清空全部数据？")){nodes=[];layout();}}
+document.getElementById('searchInp').oninput=e=>searchKey=e.target.value,draw();
+
+document.getElementById('saveData').onclick=()=>{
+    let str=JSON.stringify(nodes);
+    let blob=new Blob([str],{type:'text/plain'});
+    let url=URL.createObjectURL(blob);
+    let a=document.createElement('a');
+    a.href=url;a.download='图谱数据.json';a.click();
+    URL.revokeObjectURL(url);
+    alert("数据保存成功");
+};
+document.getElementById('loadData').onclick=()=>{
+    let ip=document.createElement('input');ip.type='file';ip.accept='.json';
+    ip.onchange=e=>{
+        let f=e.target.files[0];if(!f)return;
+        let r=new FileReader();
+        r.onload=ev=>{
+            try{nodes=JSON.parse(ev.target.result);layout();alert("数据读取完成");}
+            catch{alert("文件格式错误");}
+        };
+        r.readAsText(f);
+    };
+    ip.click();
+};
+
+function resizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  const container = document.getElementById('container');
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+
+  cvs.width = w * dpr;
+  cvs.height = h * dpr;
+  cvs.style.width = w + 'px';
+  cvs.style.height = h + 'px';
+
+  ctx.scale(dpr, dpr);
+  layout();
+}
+
+window.onload = () => {
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+};
+</script>
+</body>
+</html>
