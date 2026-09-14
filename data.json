@@ -19,7 +19,7 @@
    "status": "active",
    "collapsed": false,
    "slot": null,
-   "x": 898.884
+   "x": 785.416
   },
   {
    "id": "姜闻野",
@@ -51,7 +51,7 @@
    "status": "active",
    "collapsed": false,
    "slot": null,
-   "x": 795.957
+   "x": null
   },
   {
    "id": "江瑜七",
@@ -81,7 +81,7 @@
    "order": 0,
    "status": "active",
    "collapsed": false,
-   "x": 680.81
+   "x": 789.007
   },
   {
    "id": "|昙梦|",
@@ -131,7 +131,7 @@
    "order": 1,
    "status": "away",
    "collapsed": false,
-   "x": 653.863,
+   "x": 557.794,
    "slot": null
   },
   {
@@ -142,7 +142,7 @@
    "order": 0,
    "status": "active",
    "collapsed": false,
-   "x": 776.054
+   "x": 669.672
   },
   {
    "id": "淳崽",
@@ -152,7 +152,7 @@
    "order": 0,
    "status": "active",
    "collapsed": false,
-   "x": 1033.52
+   "x": 1031.33
   },
   {
    "id": "休葕",
@@ -162,7 +162,7 @@
    "order": 5,
    "status": "active",
    "collapsed": false,
-   "x": 1159.71,
+   "x": 1148.23,
    "slot": null
   },
   {
@@ -185,7 +185,7 @@
    "name": "沈聴澜",
    "avatar": "avatars/%E6%B2%88%E8%81%B4%E6%BE%9C.jpg?v=1785151168000",
    "slot": null,
-   "x": 1277.33
+   "x": 1266.4
   },
   {
    "id": "王家老四",
@@ -196,7 +196,7 @@
    "name": "王家老四",
    "avatar": "avatars/%E7%8E%8B%E5%AE%B6%E8%80%81%E5%9B%9B.jpg?v=1785151283860",
    "slot": null,
-   "x": 1394.95
+   "x": 1384.02
   },
   {
    "id": "江弥声丷",
@@ -204,10 +204,10 @@
    "order": 1,
    "status": "active",
    "collapsed": false,
-   "name": "姜叙谣",
+   "name": "江弥声丷",
    "avatar": "avatars/%E6%B1%9F%E5%BC%A5%E5%A3%B0%E4%B8%B7.jpg?v=1787122347243",
    "slot": null,
-   "x": 192.801
+   "x": 199.743
   },
   {
    "id": "我马上要打你",
@@ -218,29 +218,7 @@
    "name": "手臂",
    "avatar": "avatars/%E6%88%91%E9%A9%AC%E4%B8%8A%E8%A6%81%E6%89%93%E4%BD%A0.jpg?v=1787122357751",
    "slot": null,
-   "x": 387.509
-  },
-  {
-   "id": "霜前剑",
-   "row": 2,
-   "order": 5,
-   "status": "active",
-   "collapsed": false,
-   "name": "霜霜",
-   "avatar": "avatars/%E9%9C%9C%E5%89%8D%E5%89%91.jpg?v=1789380138528",
-   "slot": null,
-   "x": 498.295
-  },
-  {
-   "id": "洛子依",
-   "row": 2,
-   "order": 1,
-   "status": "active",
-   "collapsed": false,
-   "name": "洛子依",
-   "avatar": "avatars/%E6%B4%9B%E5%AD%90%E4%BE%9D.jpg?v=1789380203267",
-   "slot": null,
-   "x": 1159.01
+   "x": 392.427
   }
  ],
  "edges": [
@@ -392,16 +370,6 @@
   {
    "a": "休葕",
    "b": "天訁",
-   "type": "shifu"
-  },
-  {
-   "a": "霜前剑",
-   "b": "江弥声丷",
-   "type": "shifu"
-  },
-  {
-   "a": "洛子依",
-   "b": "休葕",
    "type": "shifu"
   }
  ],
