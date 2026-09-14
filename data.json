@@ -1,0 +1,415 @@
+{
+ "people": [
+  {
+   "id": "天訁",
+   "name": "起飞🛫",
+   "avatar": "https://s41.ax1x.com/2026/05/24/pm9dn10.jpg",
+   "row": 0,
+   "order": 0,
+   "status": "active",
+   "collapsed": false,
+   "x": 629.08
+  },
+  {
+   "id": "譜天之下",
+   "name": "譜天之下虹虹",
+   "avatar": "avatars/%E8%AD%9C%E5%A4%A9%E4%B9%8B%E4%B8%8B.jpg?v=1785151089108",
+   "row": 2,
+   "order": 2,
+   "status": "active",
+   "collapsed": false,
+   "slot": null,
+   "x": 898.884
+  },
+  {
+   "id": "姜闻野",
+   "name": "姜闻野",
+   "avatar": "https://s41.ax1x.com/2026/05/24/pm9d8AJ.jpg",
+   "row": 1,
+   "order": 2,
+   "status": "active",
+   "collapsed": false,
+   "x": 318.47
+  },
+  {
+   "id": "杏酥仁",
+   "name": "杏酥仁",
+   "avatar": "https://s41.ax1x.com/2026/05/24/pm9dGN9.jpg",
+   "row": 1,
+   "order": 3,
+   "status": "active",
+   "collapsed": false,
+   "x": 440.153,
+   "slot": null
+  },
+  {
+   "id": "燕山晦明",
+   "name": "燕山晦明",
+   "avatar": "https://s41.ax1x.com/2026/05/29/pmFkXrV.jpg",
+   "row": 1,
+   "order": 4,
+   "status": "active",
+   "collapsed": false,
+   "slot": null,
+   "x": 795.957
+  },
+  {
+   "id": "江瑜七",
+   "name": "江瑜七",
+   "avatar": "https://s41.ax1x.com/2026/05/24/pm9dUc6.jpg",
+   "row": 1,
+   "order": 0,
+   "status": "active",
+   "collapsed": false,
+   "x": 555.193
+  },
+  {
+   "id": "虞珂白",
+   "name": "虞珂白",
+   "avatar": "https://s41.ax1x.com/2026/05/24/pm9dUc6.jpg",
+   "row": 1,
+   "order": 0,
+   "status": "active",
+   "collapsed": false,
+   "x": 909.287
+  },
+  {
+   "id": "沈岁愉",
+   "name": "轻涟",
+   "avatar": "https://s41.ax1x.com/2026/05/24/pm9d0BD.jpg",
+   "row": 1,
+   "order": 0,
+   "status": "active",
+   "collapsed": false,
+   "x": 680.81
+  },
+  {
+   "id": "|昙梦|",
+   "name": "八万昙梦",
+   "avatar": "https://s41.ax1x.com/2026/05/29/pmFkzaF.jpg",
+   "row": 1,
+   "order": 0,
+   "status": "active",
+   "collapsed": false,
+   "x": 1033.32
+  },
+  {
+   "id": "说画",
+   "name": "画子",
+   "avatar": "avatars/%E8%AF%B4%E7%94%BB.jpg?v=1787122068735",
+   "row": 2,
+   "order": 1,
+   "status": "active",
+   "collapsed": false,
+   "x": 56.5232
+  },
+  {
+   "id": "壹前",
+   "name": "壹前",
+   "avatar": "https://s41.ax1x.com/2026/05/24/pm9dhDS.jpg",
+   "row": 2,
+   "order": 2,
+   "status": "active",
+   "collapsed": false,
+   "x": 168.477
+  },
+  {
+   "id": "月落山深",
+   "name": "笙笙辞",
+   "avatar": "https://s41.ax1x.com/2026/05/24/pm9dIEQ.jpg",
+   "row": 2,
+   "order": 3,
+   "status": "active",
+   "collapsed": false,
+   "x": 277.874
+  },
+  {
+   "id": "想画",
+   "name": "敌意",
+   "avatar": "https://s41.ax1x.com/2026/05/24/pm9dT4s.jpg",
+   "row": 2,
+   "order": 1,
+   "status": "away",
+   "collapsed": false,
+   "x": 653.863,
+   "slot": null
+  },
+  {
+   "id": "祈曜",
+   "name": "祈曜",
+   "avatar": "avatars/%E7%A5%88%E6%9B%9C.jpg?v=1785151049042",
+   "row": 2,
+   "order": 0,
+   "status": "active",
+   "collapsed": false,
+   "x": 776.054
+  },
+  {
+   "id": "淳崽",
+   "name": "淳崽",
+   "avatar": "https://s41.ax1x.com/2026/05/24/pm9db3q.jpg",
+   "row": 2,
+   "order": 0,
+   "status": "active",
+   "collapsed": false,
+   "x": 1033.52
+  },
+  {
+   "id": "休葕",
+   "name": "休葕",
+   "avatar": "avatars/%E4%BC%91%E8%91%95.jpg?v=1785150866236",
+   "row": 1,
+   "order": 5,
+   "status": "active",
+   "collapsed": false,
+   "x": 1159.71,
+   "slot": null
+  },
+  {
+   "id": "iii",
+   "row": 0,
+   "order": 0,
+   "status": "retired",
+   "collapsed": false,
+   "name": "师娘",
+   "avatar": "avatars/iii.jpg?v=1785150990961",
+   "slot": null,
+   "x": 820.94
+  },
+  {
+   "id": "沈聴澜",
+   "row": 1,
+   "order": 6,
+   "status": "active",
+   "collapsed": false,
+   "name": "沈聴澜",
+   "avatar": "avatars/%E6%B2%88%E8%81%B4%E6%BE%9C.jpg?v=1785151168000",
+   "slot": null,
+   "x": 1277.33
+  },
+  {
+   "id": "王家老四",
+   "row": 1,
+   "order": 7,
+   "status": "active",
+   "collapsed": false,
+   "name": "王家老四",
+   "avatar": "avatars/%E7%8E%8B%E5%AE%B6%E8%80%81%E5%9B%9B.jpg?v=1785151283860",
+   "slot": null,
+   "x": 1394.95
+  },
+  {
+   "id": "江弥声丷",
+   "row": 1,
+   "order": 1,
+   "status": "active",
+   "collapsed": false,
+   "name": "姜叙谣",
+   "avatar": "avatars/%E6%B1%9F%E5%BC%A5%E5%A3%B0%E4%B8%B7.jpg?v=1787122347243",
+   "slot": null,
+   "x": null
+  },
+  {
+   "id": "我马上要打你",
+   "row": 2,
+   "order": 4,
+   "status": "active",
+   "collapsed": false,
+   "name": "手臂",
+   "avatar": "avatars/%E6%88%91%E9%A9%AC%E4%B8%8A%E8%A6%81%E6%89%93%E4%BD%A0.jpg?v=1787122357751",
+   "slot": null,
+   "x": 387.509
+  },
+  {
+   "id": "霜前剑",
+   "row": 2,
+   "order": 5,
+   "status": "active",
+   "collapsed": false,
+   "name": "霜霜",
+   "avatar": "avatars/%E9%9C%9C%E5%89%8D%E5%89%91.jpg?v=1789380138528",
+   "slot": null,
+   "x": 498.295
+  },
+  {
+   "id": "洛子依",
+   "row": 2,
+   "order": 1,
+   "status": "active",
+   "collapsed": false,
+   "name": "洛子依",
+   "avatar": "",
+   "slot": null,
+   "x": 1159.01
+  }
+ ],
+ "edges": [
+  {
+   "a": "姜闻野",
+   "b": "天訁",
+   "type": "shifu"
+  },
+  {
+   "a": "杏酥仁",
+   "b": "天訁",
+   "type": "shifu"
+  },
+  {
+   "a": "燕山晦明",
+   "b": "天訁",
+   "type": "shifu"
+  },
+  {
+   "a": "江瑜七",
+   "b": "天訁",
+   "type": "bwshifu"
+  },
+  {
+   "a": "虞珂白",
+   "b": "天訁",
+   "type": "bwshifu"
+  },
+  {
+   "a": "沈岁愉",
+   "b": "天訁",
+   "type": "bwshifu"
+  },
+  {
+   "a": "|昙梦|",
+   "b": "天訁",
+   "type": "bwshifu"
+  },
+  {
+   "a": "想画",
+   "b": "燕山晦明",
+   "type": "shifu"
+  },
+  {
+   "a": "祈曜",
+   "b": "燕山晦明",
+   "type": "bwshifu"
+  },
+  {
+   "a": "淳崽",
+   "b": "|昙梦|",
+   "type": "bwshifu"
+  },
+  {
+   "a": "|昙梦|",
+   "b": "燕山晦明",
+   "type": "jieyi"
+  },
+  {
+   "a": "|昙梦|",
+   "b": "燕山晦明",
+   "type": "xiayuan"
+  },
+  {
+   "a": "|昙梦|",
+   "b": "淳崽",
+   "type": "xiayuan"
+  },
+  {
+   "a": "|昙梦|",
+   "b": "淳崽",
+   "type": "jieyi"
+  },
+  {
+   "a": "江瑜七",
+   "b": "沈岁愉",
+   "type": "qinyou"
+  },
+  {
+   "a": "江瑜七",
+   "b": "虞珂白",
+   "type": "qinyou"
+  },
+  {
+   "a": "沈岁愉",
+   "b": "虞珂白",
+   "type": "qinyou"
+  },
+  {
+   "a": "譜天之下",
+   "b": "燕山晦明",
+   "type": "shifu"
+  },
+  {
+   "a": "iii",
+   "b": "天訁",
+   "type": "xiayuan"
+  },
+  {
+   "a": "沈聴澜",
+   "b": "天訁",
+   "type": "shifu"
+  },
+  {
+   "a": "王家老四",
+   "b": "天訁",
+   "type": "shifu"
+  },
+  {
+   "a": "江弥声丷",
+   "b": "天訁",
+   "type": "shifu"
+  },
+  {
+   "a": "说画",
+   "b": "江弥声丷",
+   "type": "shifu"
+  },
+  {
+   "a": "壹前",
+   "b": "江弥声丷",
+   "type": "shifu"
+  },
+  {
+   "a": "月落山深",
+   "b": "江弥声丷",
+   "type": "shifu"
+  },
+  {
+   "a": "我马上要打你",
+   "b": "江弥声丷",
+   "type": "shifu"
+  },
+  {
+   "a": "江弥声丷",
+   "b": "江瑜七",
+   "type": "qinyou"
+  },
+  {
+   "a": "江弥声丷",
+   "b": "虞珂白",
+   "type": "qinyou"
+  },
+  {
+   "a": "沈岁愉",
+   "b": "江弥声丷",
+   "type": "qinyou"
+  },
+  {
+   "a": "休葕",
+   "b": "天訁",
+   "type": "shifu"
+  },
+  {
+   "a": "霜前剑",
+   "b": "江弥声丷",
+   "type": "shifu"
+  },
+  {
+   "a": "洛子依",
+   "b": "休葕",
+   "type": "shifu"
+  }
+ ],
+ "rowNames": [
+  "开山",
+  "二代",
+  "三代",
+  "四代",
+  "五代"
+ ]
+}
