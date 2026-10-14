@@ -7,8 +7,10 @@
    "species": "fox",
    "color": 14469365,
    "name": "",
-   "avatar": "",
-   "_img": null
+   "avatar": "avatars/%7C%E6%98%99%E5%A4%A2%7C.jpg?v=1791992124445",
+   "_img": {
+    "_src": "avatars/%7C%E6%98%99%E5%A4%A2%7C.jpg?v=1791992124445"
+   }
   },
   {
    "id": "越颖",
@@ -24,15 +26,13 @@
   },
   {
    "id": "燕山晦明",
-   "x": -4.14,
-   "z": -8.52,
+   "x": -3.65,
+   "z": -8.08,
    "species": "dog",
    "color": 16115408,
    "name": "",
-   "avatar": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791991824750",
-   "_img": {
-    "_src": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791991824750"
-   }
+   "avatar": "",
+   "_img": null
   },
   {
    "id": "绿豆冰冰凉",
@@ -101,27 +101,27 @@
    "species": "bunny",
    "color": 14469365,
    "name": "",
-   "avatar": "avatars/%E5%AD%90%E6%9C%9F..jpg?v=1791991954240",
+   "avatar": "",
    "_img": null
   },
   {
    "id": "祈矅",
-   "x": -7.59,
-   "z": 5.78,
+   "x": -6.89,
+   "z": 5.01,
    "species": "fox",
    "color": 13496038,
    "name": "",
-   "avatar": "avatars/%E7%A5%88%E7%9F%85.jpg?v=1791991925490",
+   "avatar": "",
    "_img": null
   },
   {
    "id": "魏惬意",
-   "x": -9.43,
-   "z": 1.41,
+   "x": -8.86,
+   "z": 1.07,
    "species": "dog",
    "color": 16767460,
    "name": "",
-   "avatar": "avatars/%E9%AD%8F%E6%83%AC%E6%84%8F.jpg?v=1791991893349",
+   "avatar": "",
    "_img": null
   },
   {
@@ -131,7 +131,7 @@
    "species": "bear",
    "color": 16767460,
    "name": "",
-   "avatar": "avatars/%E5%BF%83%E6%84%8F.jpg?v=1791991889066",
+   "avatar": "",
    "_img": null
   },
   {
@@ -141,7 +141,7 @@
    "species": "dog",
    "color": 13165311,
    "name": "",
-   "avatar": "avatars/%E9%9B%A8%E5%A4%A9%E6%98%93%E7%9D%A1.jpg?v=1791991861399",
+   "avatar": "",
    "_img": null
   },
   {
