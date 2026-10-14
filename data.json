@@ -18,17 +18,21 @@
    "color": 16239065,
    "name": "",
    "avatar": "avatars/%E8%B6%8A%E9%A2%96.jpg?v=1791991767577",
-   "_img": null
+   "_img": {
+    "_src": "avatars/%E8%B6%8A%E9%A2%96.jpg?v=1791991767577"
+   }
   },
   {
    "id": "燕山晦明",
-   "x": -3.65,
-   "z": -8.08,
+   "x": -4.14,
+   "z": -8.52,
    "species": "dog",
    "color": 16115408,
    "name": "",
-   "avatar": "",
-   "_img": null
+   "avatar": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791991824750",
+   "_img": {
+    "_src": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791991824750"
+   }
   },
   {
    "id": "绿豆冰冰凉",
@@ -38,7 +42,9 @@
    "color": 13165311,
    "name": "",
    "avatar": "avatars/%E7%BB%BF%E8%B1%86%E5%86%B0%E5%86%B0%E5%87%89.jpg?v=1791991746046",
-   "_img": null
+   "_img": {
+    "_src": "avatars/%E7%BB%BF%E8%B1%86%E5%86%B0%E5%86%B0%E5%87%89.jpg?v=1791991746046"
+   }
   },
   {
    "id": "北寒知南逸",
@@ -48,7 +54,9 @@
    "color": 14021324,
    "name": "",
    "avatar": "avatars/%E5%8C%97%E5%AF%92%E7%9F%A5%E5%8D%97%E9%80%B8.jpg?v=1791991697118",
-   "_img": null
+   "_img": {
+    "_src": "avatars/%E5%8C%97%E5%AF%92%E7%9F%A5%E5%8D%97%E9%80%B8.jpg?v=1791991697118"
+   }
   },
   {
    "id": "一封小情书",
@@ -58,7 +66,9 @@
    "color": 13496038,
    "name": "",
    "avatar": "avatars/%E4%B8%80%E5%B0%81%E5%B0%8F%E6%83%85%E4%B9%A6.jpg?v=1791991681726",
-   "_img": null
+   "_img": {
+    "_src": "avatars/%E4%B8%80%E5%B0%81%E5%B0%8F%E6%83%85%E4%B9%A6.jpg?v=1791991681726"
+   }
   },
   {
    "id": "淳崽",
@@ -121,8 +131,10 @@
    "species": "bear",
    "color": 16767460,
    "name": "",
-   "avatar": "",
-   "_img": null
+   "avatar": "avatars/%E5%BF%83%E6%84%8F.jpg?v=1791991889066",
+   "_img": {
+    "_src": "avatars/%E5%BF%83%E6%84%8F.jpg?v=1791991889066"
+   }
   },
   {
    "id": "雨天易睡",
@@ -131,8 +143,10 @@
    "species": "dog",
    "color": 13165311,
    "name": "",
-   "avatar": "",
-   "_img": null
+   "avatar": "avatars/%E9%9B%A8%E5%A4%A9%E6%98%93%E7%9D%A1.jpg?v=1791991861399",
+   "_img": {
+    "_src": "avatars/%E9%9B%A8%E5%A4%A9%E6%98%93%E7%9D%A1.jpg?v=1791991861399"
+   }
   },
   {
    "id": "林郁城",
@@ -142,7 +156,9 @@
    "color": 14021324,
    "name": "",
    "avatar": "avatars/%E6%9E%97%E9%83%81%E5%9F%8E.jpg?v=1791991726352",
-   "_img": null
+   "_img": {
+    "_src": "avatars/%E6%9E%97%E9%83%81%E5%9F%8E.jpg?v=1791991726352"
+   }
   }
  ],
  "edges": [
