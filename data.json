@@ -32,7 +32,9 @@
    "color": 16115408,
    "name": "",
    "avatar": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791992639816",
-   "_img": null
+   "_img": {
+    "_src": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791992639816"
+   }
   },
   {
    "id": "绿豆冰冰凉",
@@ -131,8 +133,10 @@
    "species": "bear",
    "color": 16767460,
    "name": "",
-   "avatar": "",
-   "_img": null
+   "avatar": "avatars/%E5%BF%83%E6%84%8F.jpg?v=1791993785005",
+   "_img": {
+    "_src": "avatars/%E5%BF%83%E6%84%8F.jpg?v=1791993785005"
+   }
   },
   {
    "id": "雨天易睡",
