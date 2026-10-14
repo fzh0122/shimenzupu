@@ -101,27 +101,27 @@
    "species": "bunny",
    "color": 14469365,
    "name": "",
-   "avatar": "",
+   "avatar": "avatars/%E5%AD%90%E6%9C%9F..jpg?v=1791991954240",
    "_img": null
   },
   {
    "id": "祈矅",
-   "x": -6.89,
-   "z": 5.01,
+   "x": -7.59,
+   "z": 5.78,
    "species": "fox",
    "color": 13496038,
    "name": "",
-   "avatar": "",
+   "avatar": "avatars/%E7%A5%88%E7%9F%85.jpg?v=1791991925490",
    "_img": null
   },
   {
    "id": "魏惬意",
-   "x": -8.86,
-   "z": 1.07,
+   "x": -9.43,
+   "z": 1.41,
    "species": "dog",
    "color": 16767460,
    "name": "",
-   "avatar": "",
+   "avatar": "avatars/%E9%AD%8F%E6%83%AC%E6%84%8F.jpg?v=1791991893349",
    "_img": null
   },
   {
@@ -132,9 +132,7 @@
    "color": 16767460,
    "name": "",
    "avatar": "avatars/%E5%BF%83%E6%84%8F.jpg?v=1791991889066",
-   "_img": {
-    "_src": "avatars/%E5%BF%83%E6%84%8F.jpg?v=1791991889066"
-   }
+   "_img": null
   },
   {
    "id": "雨天易睡",
@@ -144,9 +142,7 @@
    "color": 13165311,
    "name": "",
    "avatar": "avatars/%E9%9B%A8%E5%A4%A9%E6%98%93%E7%9D%A1.jpg?v=1791991861399",
-   "_img": {
-    "_src": "avatars/%E9%9B%A8%E5%A4%A9%E6%98%93%E7%9D%A1.jpg?v=1791991861399"
-   }
+   "_img": null
   },
   {
    "id": "林郁城",
