@@ -56,7 +56,9 @@
    "color": 14021324,
    "name": "",
    "avatar": "avatars/%E5%8C%97%E5%AF%92%E7%9F%A5%E5%8D%97%E9%80%B8.jpg?v=1791994527151",
-   "_img": null
+   "_img": {
+    "_src": "avatars/%E5%8C%97%E5%AF%92%E7%9F%A5%E5%8D%97%E9%80%B8.jpg?v=1791994527151"
+   }
   },
   {
    "id": "一封小情书",
@@ -66,7 +68,9 @@
    "color": 13496038,
    "name": "",
    "avatar": "avatars/%E4%B8%80%E5%B0%81%E5%B0%8F%E6%83%85%E4%B9%A6.jpg?v=1791994565530",
-   "_img": null
+   "_img": {
+    "_src": "avatars/%E4%B8%80%E5%B0%81%E5%B0%8F%E6%83%85%E4%B9%A6.jpg?v=1791994565530"
+   }
   },
   {
    "id": "淳崽",
@@ -76,7 +80,9 @@
    "color": 16773312,
    "name": "",
    "avatar": "avatars/%E6%B7%B3%E5%B4%BD.jpg?v=1791994582925",
-   "_img": null
+   "_img": {
+    "_src": "avatars/%E6%B7%B3%E5%B4%BD.jpg?v=1791994582925"
+   }
   },
   {
    "id": "玖珎",
@@ -86,7 +92,9 @@
    "color": 16769736,
    "name": "",
    "avatar": "avatars/%E7%8E%96%E7%8F%8E.jpg?v=1791994599970",
-   "_img": null
+   "_img": {
+    "_src": "avatars/%E7%8E%96%E7%8F%8E.jpg?v=1791994599970"
+   }
   },
   {
    "id": "子期.",
@@ -96,7 +104,9 @@
    "color": 14469365,
    "name": "",
    "avatar": "avatars/%E5%AD%90%E6%9C%9F..jpg?v=1791994616465",
-   "_img": null
+   "_img": {
+    "_src": "avatars/%E5%AD%90%E6%9C%9F..jpg?v=1791994616465"
+   }
   },
   {
    "id": "祈矅",
@@ -105,8 +115,10 @@
    "species": "fox",
    "color": 13496038,
    "name": "",
-   "avatar": "",
-   "_img": null
+   "avatar": "avatars/%E7%A5%88%E7%9F%85.jpg?v=1791994796154",
+   "_img": {
+    "_src": "avatars/%E7%A5%88%E7%9F%85.jpg?v=1791994796154"
+   }
   },
   {
    "id": "魏惬意",
@@ -146,7 +158,9 @@
    "color": 14021324,
    "name": "",
    "avatar": "avatars/%E6%9E%97%E9%83%81%E5%9F%8E.jpg?v=1791994542576",
-   "_img": null
+   "_img": {
+    "_src": "avatars/%E6%9E%97%E9%83%81%E5%9F%8E.jpg?v=1791994542576"
+   }
   }
  ],
  "edges": [
