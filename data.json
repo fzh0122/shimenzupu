@@ -7,9 +7,9 @@
    "species": "fox",
    "color": 14469365,
    "name": "",
-   "avatar": "avatars/%7C%E6%98%99%E5%A4%A2%7C.jpg?v=1791994881217",
+   "avatar": "avatars/%7C%E6%98%99%E5%A4%A2%7C.jpg?v=1791992627735",
    "_img": {
-    "_src": "avatars/%7C%E6%98%99%E5%A4%A2%7C.jpg?v=1791994881217"
+    "_src": "avatars/%7C%E6%98%99%E5%A4%A2%7C.jpg?v=1791992627735"
    }
   },
   {
@@ -19,9 +19,9 @@
    "species": "fox",
    "color": 16239065,
    "name": "",
-   "avatar": "avatars/%E8%B6%8A%E9%A2%96.jpg?v=1791994891649",
+   "avatar": "avatars/%E8%B6%8A%E9%A2%96.jpg?v=1791991767577",
    "_img": {
-    "_src": "avatars/%E8%B6%8A%E9%A2%96.jpg?v=1791994891649"
+    "_src": "avatars/%E8%B6%8A%E9%A2%96.jpg?v=1791991767577"
    }
   },
   {
@@ -31,9 +31,9 @@
    "species": "dog",
    "color": 16115408,
    "name": "",
-   "avatar": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791994872096",
+   "avatar": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791992639816",
    "_img": {
-    "_src": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791994872096"
+    "_src": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791992639816"
    }
   },
   {
@@ -43,9 +43,9 @@
    "species": "bear",
    "color": 13165311,
    "name": "",
-   "avatar": "avatars/%E7%BB%BF%E8%B1%86%E5%86%B0%E5%86%B0%E5%87%89.jpg?v=1791994903923",
+   "avatar": "avatars/%E7%BB%BF%E8%B1%86%E5%86%B0%E5%86%B0%E5%87%89.jpg?v=1791991746046",
    "_img": {
-    "_src": "avatars/%E7%BB%BF%E8%B1%86%E5%86%B0%E5%86%B0%E5%87%89.jpg?v=1791994903923"
+    "_src": "avatars/%E7%BB%BF%E8%B1%86%E5%86%B0%E5%86%B0%E5%87%89.jpg?v=1791991746046"
    }
   },
   {
@@ -110,22 +110,24 @@
   },
   {
    "id": "祈矅",
-   "x": -7.39,
-   "z": 5.69,
+   "x": -7.4,
+   "z": 5.41,
    "species": "fox",
    "color": 13496038,
    "name": "",
-   "avatar": "avatars/%E7%A5%88%E7%9F%85.jpg?v=1791994918207",
-   "_img": null
+   "avatar": "avatars/%E7%A5%88%E7%9F%85.jpg?v=1791995287485",
+   "_img": {
+    "_src": "avatars/%E7%A5%88%E7%9F%85.jpg?v=1791995287485"
+   }
   },
   {
    "id": "魏惬意",
-   "x": -9.43,
-   "z": 1.3,
+   "x": -8.86,
+   "z": 1.07,
    "species": "dog",
    "color": 16767460,
    "name": "",
-   "avatar": "avatars/%E9%AD%8F%E6%83%AC%E6%84%8F.jpg?v=1791994931504",
+   "avatar": "",
    "_img": null
   },
   {
@@ -135,10 +137,8 @@
    "species": "bear",
    "color": 16767460,
    "name": "",
-   "avatar": "avatars/%E5%BF%83%E6%84%8F.jpg?v=1791994829001",
-   "_img": {
-    "_src": "avatars/%E5%BF%83%E6%84%8F.jpg?v=1791994829001"
-   }
+   "avatar": "",
+   "_img": null
   },
   {
    "id": "雨天易睡",
@@ -147,10 +147,8 @@
    "species": "dog",
    "color": 13165311,
    "name": "",
-   "avatar": "avatars/%E9%9B%A8%E5%A4%A9%E6%98%93%E7%9D%A1.jpg?v=1791994842475",
-   "_img": {
-    "_src": "avatars/%E9%9B%A8%E5%A4%A9%E6%98%93%E7%9D%A1.jpg?v=1791994842475"
-   }
+   "avatar": "",
+   "_img": null
   },
   {
    "id": "林郁城",
