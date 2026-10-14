@@ -1,0 +1,271 @@
+{
+ "people": [
+  {
+   "id": "|昙夢|",
+   "x": null,
+   "z": null,
+   "species": "fox",
+   "color": 14469365,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "越颖",
+   "x": null,
+   "z": null,
+   "species": "fox",
+   "color": 16239065,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "燕山晦明",
+   "x": -3.65,
+   "z": -8.08,
+   "species": "dog",
+   "color": 16115408,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "绿豆冰冰凉",
+   "x": 6.44,
+   "z": -5.44,
+   "species": "bear",
+   "color": 13165311,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "北寒知南逸",
+   "x": null,
+   "z": null,
+   "species": "bunny",
+   "color": 14021324,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "一封小情书",
+   "x": null,
+   "z": null,
+   "species": "cat",
+   "color": 13496038,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "淳崽",
+   "x": null,
+   "z": null,
+   "species": "fox",
+   "color": 16773312,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "玖珎",
+   "x": null,
+   "z": null,
+   "species": "dog",
+   "color": 16769736,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "子期.",
+   "x": -3.99,
+   "z": 8.27,
+   "species": "bunny",
+   "color": 14469365,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "祈矅",
+   "x": -6.89,
+   "z": 5.01,
+   "species": "fox",
+   "color": 13496038,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "魏惬意",
+   "x": -8.86,
+   "z": 1.07,
+   "species": "dog",
+   "color": 16767460,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "心意",
+   "x": -9.16,
+   "z": -2.56,
+   "species": "bear",
+   "color": 16767460,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "雨天易睡",
+   "x": null,
+   "z": null,
+   "species": "dog",
+   "color": 13165311,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  },
+  {
+   "id": "林郁城",
+   "x": 8.36,
+   "z": -2.31,
+   "species": "dog",
+   "color": 14021324,
+   "name": "",
+   "avatar": "",
+   "_img": null
+  }
+ ],
+ "edges": [
+  {
+   "a": "|昙夢|",
+   "b": "越颖",
+   "type": "jieyi"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "燕山晦明",
+   "type": "jieyi"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "绿豆冰冰凉",
+   "type": "jieyi"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "北寒知南逸",
+   "type": "jieyi"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "淳崽",
+   "type": "jieyi"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "玖珎",
+   "type": "jieyi"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "林郁城",
+   "type": "jieyi"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "魏惬意",
+   "type": "jieyi"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "越颖",
+   "type": "xiayuan"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "燕山晦明",
+   "type": "xiayuan"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "淳崽",
+   "type": "xiayuan"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "越颖",
+   "type": "shifu"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "玖珎",
+   "type": "shifu"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "一封小情书",
+   "type": "shifu"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "魏惬意",
+   "type": "shifu"
+  },
+  {
+   "a": "燕山晦明",
+   "b": "心意",
+   "type": "shifu"
+  },
+  {
+   "a": "燕山晦明",
+   "b": "雨天易睡",
+   "type": "shifu"
+  },
+  {
+   "a": "燕山晦明",
+   "b": "祈矅",
+   "type": "shifu"
+  },
+  {
+   "a": "淳崽",
+   "b": "玖珎",
+   "type": "xiayuan"
+  },
+  {
+   "a": "玖珎",
+   "b": "淳崽",
+   "type": "shifu"
+  },
+  {
+   "a": "子期.",
+   "b": "一封小情书",
+   "type": "xiayuan"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "绿豆冰冰凉",
+   "type": "biwai"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "北寒知南逸",
+   "type": "biwai"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "淳崽",
+   "type": "biwai"
+  },
+  {
+   "a": "|昙夢|",
+   "b": "燕山晦明",
+   "type": "biwai"
+  }
+ ]
+}
