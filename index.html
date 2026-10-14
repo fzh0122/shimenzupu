@@ -369,20 +369,32 @@ document.getElementById('ghSave').onclick = ()=>{
   localStorage.setItem('campfire_gh', JSON.stringify(c));
   closeModal('ghModal'); updateCloudStatus(); toast("云端设置已保存");
 };
+/* ---- GitHub 通用写入：409 时重新取 sha 重试 ---- */
+async function ghPut(c, path, contentB64, message){
+  const api = `https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}`;
+  const headers = { 'Authorization':'Bearer '+c.token, 'Accept':'application/vnd.github+json' };
+  const branch = c.branch||'main';
+  for(let i=0;i<3;i++){
+    const get = await fetch(api+'?ref='+branch, {headers});
+    if(get.status===401||get.status===403) return {auth:false};
+    const sha = get.ok ? (await get.json()).sha : undefined;
+    const put = await fetch(api, { method:'PUT', headers,
+      body: JSON.stringify({ message, content:contentB64, sha, branch }) });
+    if(put.ok) return {ok:true};
+    if(put.status!==409) return {ok:false, status:put.status};
+    await new Promise(r=>setTimeout(r, 900));   // 409：sha 过期/并发，重新取再试
+  }
+  return {ok:false, status:409};
+}
 async function publish(){
   const c = ghCfg();
   if(!c.owner || !c.repo || !c.token){ openGhModal(); toast("请先完成云端设置"); return; }
   updateCloudStatus('☁ 发布中…');
   try{
-    const api = `https://api.github.com/repos/${c.owner}/${c.repo}/contents/data.json`;
-    const headers = { 'Authorization':'Bearer '+c.token, 'Accept':'application/vnd.github+json' };
-    const get = await fetch(api+'?ref='+(c.branch||'main'), {headers});
-    if(get.status===401||get.status===403){ updateCloudStatus(); toast("令牌无效或无权限"); return; }
-    const sha = get.ok ? (await get.json()).sha : undefined;
     const content = btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(data,null,1))));
-    const put = await fetch(api, { method:'PUT', headers,
-      body: JSON.stringify({ message:'篝火营地更新 '+new Date().toLocaleString('zh-CN'), content, sha, branch:c.branch||'main' }) });
-    if(!put.ok){ updateCloudStatus(); toast("发布失败（"+put.status+"）"); return; }
+    const r = await ghPut(c, 'data.json', content, '篝火营地更新 '+new Date().toLocaleString('zh-CN'));
+    if(r.auth===false){ updateCloudStatus(); toast("令牌无效或无权限"); return; }
+    if(!r.ok){ updateCloudStatus(); toast("发布失败（"+r.status+"）"); return; }
     cloudDirty = false; updateCloudStatus(); toast("☁ 已发布，约 1 分钟后全员可见");
   }catch(e){ updateCloudStatus(); toast("网络异常，发布失败"); }
 }
@@ -411,13 +423,9 @@ async function uploadAvatar(id, file){
   try{
     const b64 = await compressImage(file);
     const path = 'avatars/' + encodeURIComponent(id) + '.jpg';
-    const api = `https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}`;
-    const headers = { 'Authorization':'Bearer '+c.token, 'Accept':'application/vnd.github+json' };
-    const get = await fetch(api+'?ref='+(c.branch||'main'), {headers});
-    const sha = get.ok ? (await get.json()).sha : undefined;
-    const put = await fetch(api, { method:'PUT', headers,
-      body: JSON.stringify({ message:'头像更新 '+id, content:b64, sha, branch:c.branch||'main' }) });
-    if(!put.ok){ toast("头像上传失败（"+put.status+"）"); return; }
+    const r = await ghPut(c, path, b64, '头像更新 '+id);
+    if(r.auth===false){ toast("令牌无效或无权限"); return; }
+    if(!r.ok){ toast("头像上传失败（"+r.status+"）"); return; }
     snapshot();
     person(id).avatar = path + '?v=' + Date.now();
     save(); rebuildPeople();
