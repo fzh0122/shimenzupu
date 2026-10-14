@@ -29,8 +29,10 @@
    "species": "dog",
    "color": 16115408,
    "name": "",
-   "avatar": "",
-   "_img": null
+   "avatar": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791992309299",
+   "_img": {
+    "_src": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791992309299"
+   }
   },
   {
    "id": "绿豆冰冰凉",
@@ -104,12 +106,12 @@
   },
   {
    "id": "祈矅",
-   "x": -6.89,
-   "z": 5.01,
+   "x": -7.27,
+   "z": 5.72,
    "species": "fox",
    "color": 13496038,
    "name": "",
-   "avatar": "",
+   "avatar": "avatars/%E7%A5%88%E7%9F%85.jpg?v=1791992368049",
    "_img": null
   },
   {
@@ -119,7 +121,7 @@
    "species": "dog",
    "color": 16767460,
    "name": "",
-   "avatar": "",
+   "avatar": "avatars/%E9%AD%8F%E6%83%AC%E6%84%8F.jpg?v=1791992351904",
    "_img": null
   },
   {
@@ -129,7 +131,7 @@
    "species": "bear",
    "color": 16767460,
    "name": "",
-   "avatar": "",
+   "avatar": "avatars/%E5%BF%83%E6%84%8F.jpg?v=1791992339277",
    "_img": null
   },
   {
@@ -139,7 +141,7 @@
    "species": "dog",
    "color": 13165311,
    "name": "",
-   "avatar": "",
+   "avatar": "avatars/%E9%9B%A8%E5%A4%A9%E6%98%93%E7%9D%A1.jpg?v=1791992321565",
    "_img": null
   },
   {
