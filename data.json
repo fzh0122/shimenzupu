@@ -77,8 +77,10 @@
    "species": "dog",
    "color": 16769736,
    "name": "",
-   "avatar": "",
-   "_img": null
+   "avatar": "avatars/%E7%8E%96%E7%8F%8E.jpg?v=1791991618340",
+   "_img": {
+    "_src": "avatars/%E7%8E%96%E7%8F%8E.jpg?v=1791991618340"
+   }
   },
   {
    "id": "子期.",
