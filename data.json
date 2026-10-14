@@ -37,17 +37,17 @@
    "species": "bear",
    "color": 13165311,
    "name": "",
-   "avatar": "",
+   "avatar": "avatars/%E7%BB%BF%E8%B1%86%E5%86%B0%E5%86%B0%E5%87%89.jpg?v=1791991746046",
    "_img": null
   },
   {
    "id": "北寒知南逸",
-   "x": 9.29,
-   "z": 2.14,
+   "x": null,
+   "z": null,
    "species": "bunny",
    "color": 14021324,
    "name": "",
-   "avatar": "",
+   "avatar": "avatars/%E5%8C%97%E5%AF%92%E7%9F%A5%E5%8D%97%E9%80%B8.jpg?v=1791991697118",
    "_img": null
   },
   {
@@ -136,12 +136,12 @@
   },
   {
    "id": "林郁城",
-   "x": 8.88,
-   "z": -1.55,
+   "x": 8.94,
+   "z": -1.85,
    "species": "dog",
    "color": 14021324,
    "name": "",
-   "avatar": "",
+   "avatar": "avatars/%E6%9E%97%E9%83%81%E5%9F%8E.jpg?v=1791991726352",
    "_img": null
   }
  ],
