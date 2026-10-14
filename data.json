@@ -52,12 +52,12 @@
   },
   {
    "id": "一封小情书",
-   "x": 7.33,
-   "z": 5.58,
+   "x": null,
+   "z": null,
    "species": "cat",
    "color": 13496038,
    "name": "",
-   "avatar": "",
+   "avatar": "avatars/%E4%B8%80%E5%B0%81%E5%B0%8F%E6%83%85%E4%B9%A6.jpg?v=1791991681726",
    "_img": null
   },
   {
@@ -67,8 +67,10 @@
    "species": "fox",
    "color": 16773312,
    "name": "",
-   "avatar": "",
-   "_img": null
+   "avatar": "avatars/%E6%B7%B3%E5%B4%BD.jpg?v=1791991628782",
+   "_img": {
+    "_src": "avatars/%E6%B7%B3%E5%B4%BD.jpg?v=1791991628782"
+   }
   },
   {
    "id": "玖珎",
