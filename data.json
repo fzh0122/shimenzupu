@@ -2,8 +2,8 @@
  "people": [
   {
    "id": "|昙夢|",
-   "x": null,
-   "z": null,
+   "x": -0.09,
+   "z": -9.17,
    "species": "fox",
    "color": 14469365,
    "name": "",
@@ -17,7 +17,7 @@
    "species": "fox",
    "color": 16239065,
    "name": "",
-   "avatar": "",
+   "avatar": "avatars/%E8%B6%8A%E9%A2%96.jpg?v=1791991767577",
    "_img": null
   },
   {
@@ -67,9 +67,9 @@
    "species": "fox",
    "color": 16773312,
    "name": "",
-   "avatar": "avatars/%E6%B7%B3%E5%B4%BD.jpg?v=1791991628782",
+   "avatar": "avatars/%E6%B7%B3%E5%B4%BD.jpg?v=1791991808301",
    "_img": {
-    "_src": "avatars/%E6%B7%B3%E5%B4%BD.jpg?v=1791991628782"
+    "_src": "avatars/%E6%B7%B3%E5%B4%BD.jpg?v=1791991808301"
    }
   },
   {
