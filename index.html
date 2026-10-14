@@ -1,516 +1,1328 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>师门关系</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #f4f1ea; 
-            font-family: system-ui, -apple-system, sans-serif;
-            color: #3d2f20; overflow: hidden; height: 100vh;
-            display: flex; flex-direction: column;
-            touch-action: manipulation;
-        }
-        .app-bar { padding: 1rem; background: #e8e2d6; border-bottom: 1px solid #d4cbb7; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; }
-        .legend span { display: flex; align-items: center; gap: 4px; }
-        .dot { width: 16px; height: 3px; border-radius: 1px; display: inline-block; }
-        .search-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        input[type="text"] { flex: 1; padding: 8px 12px; border: 1px solid #c9bfa9; border-radius: 6px; outline: none; background: #fffaf5; }
-        .btn { padding: 8px 14px; border-radius: 6px; border: 1px solid #c9bfa9; background: #fff; cursor: pointer; font-size: 13px; transition: 0.2s; }
-        .btn:hover { background: #fdfaf0; border-color: #7c5d42; }
-        .btn-primary { background: #7c5d42; color: #fff; border: none; }
-        .btn-primary:hover { background: #5c4033; }
-        .canvas-container { flex: 1; position: relative; overflow: hidden; cursor: grab; }
-        .canvas-container:active { cursor: grabbing; }
-        canvas { display: block; touch-action: none; image-rendering: high-quality; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: #fff; padding: 25px; border-radius: 12px; width: 90%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .modal-content h3 { margin-bottom: 15px; font-size: 18px; color: #5c4033; }
-        select { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 6px; }
-        .tip { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 11px; color: #9a8e7b; pointer-events: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>滔滔 · 篝火营地</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+/* ============ 双主题：夜·库洛米 / 昼·美乐蒂 ============ */
+:root{
+  --pink:#ff9fbb; --pink-deep:#f2678f; --purple:#b19cd9; --cream:#fff5f7;
+  --ui-font:"ZCOOL KuaiLe","PingFang SC","Microsoft YaHei",sans-serif;
+}
+body.theme-night{
+  --bg:#171221; --panel:#241b33; --panel2:#2d2240; --line:rgba(177,156,217,.35);
+  --ink:#f2e9f5; --ink-soft:#a99cc0; --accent:#ff9fbb; --accent2:#b19cd9;
+}
+body.theme-day{
+  --bg:#fff0f4; --panel:#fffafc; --panel2:#ffeef3; --line:rgba(242,103,143,.3);
+  --ink:#5c4550; --ink-soft:#b3939f; --accent:#f2678f; --accent2:#ffb7c5;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--ui-font);background:var(--bg);color:var(--ink);transition:background .5s,color .5s;
+  user-select:none;-webkit-user-select:none}
+canvas{display:block}
+
+/* ---------- 顶栏 ---------- */
+#topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:10px;
+  padding:10px 14px;pointer-events:none}
+#topbar>*{pointer-events:auto}
+#title{display:flex;align-items:baseline;gap:8px;white-space:nowrap;
+  background:var(--panel);border:2px solid var(--line);border-radius:22px;padding:6px 16px;
+  box-shadow:0 4px 14px rgba(0,0,0,.18)}
+#title h1{font-size:19px;letter-spacing:2px;color:var(--accent)}
+#title small{font-size:11px;color:var(--ink-soft)}
+#search{flex:0 1 190px;min-width:80px;padding:8px 14px;border:2px solid var(--line);border-radius:20px;
+  background:var(--panel);color:var(--ink);font-family:inherit;font-size:13px;outline:none}
+#search:focus{border-color:var(--accent)}
+.tbtn{cursor:pointer;border:2px solid var(--line);background:var(--panel);border-radius:20px;padding:7px 14px;
+  font-family:inherit;font-size:13px;color:var(--ink);transition:.15s;white-space:nowrap;
+  box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.tbtn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+#themeBtn{font-size:15px}
+
+/* ---------- 工具面板 ---------- */
+#panel{position:fixed;top:64px;right:12px;z-index:60;width:240px;background:var(--panel);
+  border:2px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.25);
+  padding:14px;display:none}
+#panel.open{display:block}
+#panel h4{font-size:13px;color:var(--accent);margin:10px 0 6px;letter-spacing:2px}
+#panel h4:first-child{margin-top:0}
+#panel .row{display:flex;flex-wrap:wrap;gap:6px}
+.pbtn{cursor:pointer;border:2px solid var(--line);background:var(--panel2);border-radius:14px;padding:6px 10px;
+  font-family:inherit;font-size:12px;color:var(--ink)}
+.pbtn:hover{border-color:var(--accent);color:var(--accent)}
+.pbtn.danger{color:#e06666}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-soft);padding:2px 0}
+.lg-dot{width:12px;height:12px;border-radius:50%}
+body.view .edit-only{display:none!important}
+
+/* ---------- 抽屉 ---------- */
+#drawer{position:fixed;top:0;right:0;bottom:0;width:290px;z-index:70;background:var(--panel);
+  border-left:2px solid var(--line);box-shadow:-10px 0 30px rgba(0,0,0,.3);
+  transform:translateX(105%);transition:transform .25s;padding:18px;overflow-y:auto;
+  border-radius:22px 0 0 22px}
+#drawer.open{transform:translateX(0)}
+#drawer h3{font-size:18px;color:var(--accent);letter-spacing:1px;margin-bottom:2px}
+#drawer .sub{font-size:12px;color:var(--ink-soft);margin-bottom:12px}
+#drawer .drow{margin-bottom:10px;font-size:13px}
+#drawer .drow b{color:var(--ink-soft);font-weight:400;margin-right:6px}
+.rel-item{display:flex;align-items:center;gap:8px;font-size:13px;padding:7px 9px;border:2px solid var(--line);
+  border-radius:12px;margin-bottom:6px;background:var(--panel2)}
+.rel-item .rm{margin-left:auto;cursor:pointer;color:#e06666;border:none;background:none;font-size:14px}
+#drawer .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+
+/* ---------- 弹窗 ---------- */
+.modal{position:fixed;inset:0;z-index:100;background:rgba(20,10,25,.55);display:none;
+  align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal.open{display:flex}
+.mbox{background:var(--panel);border:2px solid var(--line);border-radius:20px;width:92%;max-width:400px;
+  padding:20px;box-shadow:0 16px 46px rgba(0,0,0,.4);max-height:85vh;overflow-y:auto}
+.mbox h3{font-size:16px;margin-bottom:14px;color:var(--accent)}
+.mbox label{display:block;font-size:12px;color:var(--ink-soft);margin:8px 0 3px}
+.mbox input,.mbox select{width:100%;padding:9px 12px;border:2px solid var(--line);border-radius:12px;
+  background:var(--panel2);color:var(--ink);font-family:inherit;font-size:14px;outline:none}
+.mbox .mrow{display:flex;gap:8px;margin-top:16px}
+.mbox .mrow .tbtn{flex:1;text-align:center}
+.btn-primary{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important}
+
+/* ---------- 提示 ---------- */
+#toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:200;background:var(--panel);
+  border:2px solid var(--line);color:var(--ink);padding:8px 20px;border-radius:22px;font-size:13px;
+  opacity:0;transition:.25s;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#toast.show{opacity:.96}
+#hint{position:fixed;bottom:12px;left:0;right:0;text-align:center;pointer-events:none;z-index:40;
+  font-size:12px;letter-spacing:2px;color:var(--ink-soft);opacity:.7}
+
+/* ---------- 开场：库洛米&美乐蒂探头 ---------- */
+#intro{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:20px;background:var(--bg);transition:opacity .6s;overflow:hidden}
+#intro.out{opacity:0;pointer-events:none}
+#intro .mascots{display:flex;gap:34px;align-items:flex-end}
+.mascot{width:130px;height:auto;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35));animation:bob 2.2s ease-in-out infinite}
+.mascot.m2{animation-delay:.5s}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+#intro .ititle{font-size:52px;letter-spacing:14px;color:var(--accent);
+  opacity:0;animation:pop .6s cubic-bezier(.3,1.6,.5,1) .5s forwards;text-shadow:0 4px 20px rgba(242,103,143,.35)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+@keyframes fade{to{opacity:.9}}
+#intro .istar{position:absolute;font-size:16px;animation:tw 1.6s ease-in-out infinite;opacity:.8}
+@keyframes tw{0%,100%{transform:scale(.7);opacity:.4}50%{transform:scale(1.15);opacity:.95}}
+
+@media (max-width:640px){
+  #topbar{flex-wrap:wrap;gap:7px;padding:8px 10px}
+  #title h1{font-size:15px}
+  #title small{display:none}
+  #search{order:5;flex:1 1 100%}
+  .tbtn{padding:7px 10px;font-size:12px}
+  #panel{right:8px;left:8px;width:auto;max-height:55vh;overflow-y:auto}
+  #drawer{top:auto;left:0;right:0;bottom:0;width:auto;height:60%;border-left:none;border-radius:22px 22px 0 0;
+    transform:translateY(105%)}
+  #drawer.open{transform:translateY(0)}
+  #intro .ititle{font-size:26px;letter-spacing:5px}
+  .mascot{width:82px}
+}
+</style>
 </head>
-<body>
+<body class="theme-night view">
 
-<div class="app-bar">
-    <div class="header-top">
-        <h2 style="font-size: 18px;">师门关系</h2>
-        <div class="legend">
-            <span><i class="dot" style="background: #111111;"></i> 正式师徒</span>
-            <span><i class="dot" style="border-top: 3px dashed #111111;"></i> 编外师徒</span>
-            <span><i class="dot" style="background: rgba(179,134,0,0.5);"></i> 结义</span>
-            <span><i class="dot" style="background: rgba(255,77,121,0.5);"></i> 侠缘</span>
-            <span><i class="dot" style="background: rgba(0,102,204,0.5);"></i> 亲友</span>
-        </div>
-    </div>
-    <div class="search-row">
-        <input type="text" id="searchInp" placeholder="输入 ID 快速定位高亮...">
-        <button class="btn btn-primary" id="addNode">➕ 新增门人</button>
-        <button class="btn btn-primary" id="addRel">🔗 建立关系</button>
-        <button class="btn btn-primary" id="saveData">💾 保存数据</button>
-        <button class="btn btn-primary" id="loadData">📂 读取数据</button>
-        <button class="btn" onclick="resetCam()">⟳ 复位视角</button>
-        <button class="btn" style="color:red" onclick="clearData()">🗑️ 清空测试数据</button>
-    </div>
+<!-- 开场 -->
+<div id="intro">
+  <div class="mascots">
+    <img class="mascot" src="assets/kuromi.png" alt="库洛米">
+    <img class="mascot m2" src="assets/melody.png" alt="美乐蒂">
+  </div>
+  <div class="ititle">滔 滔</div>
 </div>
-
-<div class="canvas-container" id="container">
-    <canvas id="mainCanvas"></canvas>
-    <div class="tip"><b>|花叶同春，岁岁年年，千秋共颂，你我长青|</b></div>
-</div>
-
-<div id="relModal" class="modal">
-    <div class="modal-content">
-        <h3>🔗 建立/管理关系</h3>
-        <select id="relType">
-            <option value="st">⬛ 师徒实线 (A是B的正式徒弟)</option>
-            <option value="bwst">🟟 编外师徒虚线 (A是B的编外徒弟)</option>
-            <option value="jy">🟨 结义淡土黄实线 (A与B结义)</option>
-            <option value="xy">🟥 侠缘淡桃红实线 (A与B是侠缘)</option>
-            <option value="qy">🟦 亲友淡蓝色实线 (A与B是亲友)</option>
-            <option value="xh">📎 小号依附 (A是B的小号)</option>
-        </select>
-        <div style="display:flex; gap:10px; margin-bottom: 12px;">
-            <div style="flex:1;">
-                <label style="font-size:12px; color:#666;">门人 A：</label>
-                <select id="selA"></select>
-            </div>
-            <div style="flex:1;">
-                <label style="font-size:12px; color:#666;">门人 B：</label>
-                <select id="selB"></select>
-            </div>
-        </div>
-        <button class="btn btn-primary" style="width:100%; margin-top:5px;" onclick="saveRelation()">确认建立</button>
-        <button class="btn" style="width:100%; margin-top:8px; border:none;" onclick="closeModal()">取消</button>
-    </div>
-</div>
-
 <script>
-let nodes =[{"id":"|昙夢|","name":"|昙夢|","avatar":"https://fzh0122.github.io/shimenzupu/images/昙梦.jpg","masterId":null,"mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":300},{"id":"越颖","name":"越颖","avatar":"https://fzh0122.github.io/shimenzupu/images/越颖.jpg","masterId":"|昙夢|","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":-737.7973109636914},{"id":"途径他的过往","name":"过往","avatar":"https://fzh0122.github.io/shimenzupu/images/过往.jpg","masterId":"|昙夢|","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":-600.0282255718643},{"id":"地表最奶的龙","name":"地表最奶的龙","avatar":"https://fzh0122.github.io/shimenzupu/images/奶龙.jpg","masterId":"|昙夢|","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":["枝袖","言尽次"],"fixedX":-328.8986554818457},{"id":"邪恶红烧肉","name":"邪恶红烧肉","avatar":"https://fzh0122.github.io/shimenzupu/images/红烧肉.jpg","masterId":"|昙夢|","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":214.0768452836022},{"id":"一封小情书","name":"情书","avatar":"https://fzh0122.github.io/shimenzupu/images/情书.jpg","masterId":"|昙夢|","mainId":null,"bwsts":[],"jys":[],"xys":["山川、"],"qys":[],"fixedX":-53.87319979588055},{"id":"燕山晦明","name":"燕山晦明","avatar":"https://fzh0122.github.io/shimenzupu/images/燕山晦明.jpg","masterId":null,"mainId":null,"bwsts":["|昙夢|"],"jys":[],"xys":[],"qys":[],"fixedX":355.02545568596526},{"id":"北寒知南逸","name":"南逸","avatar":"https://fzh0122.github.io/shimenzupu/images/南逸.jpg","masterId":null,"mainId":null,"bwsts":["|昙夢|"],"jys":[],"xys":[],"qys":[],"fixedX":496.075888832189},{"id":"淳崽","name":"淳崽","avatar":"https://fzh0122.github.io/shimenzupu/images/淳崽.jpg","masterId":null,"mainId":null,"bwsts":["|昙夢|"],"jys":[],"xys":[],"qys":[],"fixedX":632.3414997448506},{"id":"玖珎","name":"玖珎","avatar":"https://fzh0122.github.io/shimenzupu/images/玖珎.jpg","masterId":null,"mainId":null,"bwsts":["|昙夢|"],"jys":[],"xys":[],"qys":[],"fixedX":775.7843440078557},{"id":"绿豆冰冰凉","name":"绿豆冰冰凉","avatar":"https://fzh0122.github.io/shimenzupu/images/绿豆.jpg","masterId":null,"mainId":null,"bwsts":["|昙夢|"],"jys":[],"xys":[],"qys":[],"fixedX":909.6575438037361},{"id":"小小哞哞","name":"哞哞","avatar":"https://fzh0122.github.io/shimenzupu/images/哞哞.jpg","masterId":null,"mainId":null,"bwsts":["|昙夢|"],"jys":[],"xys":[],"qys":["陪穗穗看海"],"fixedX":1045.923154716398},{"id":"山川、","name":"山川、","avatar":"https://fzh0122.github.io/shimenzupu/images/山川.jpg","masterId":null,"mainId":null,"bwsts":[],"jys":[],"xys":["一封小情书"],"qys":[],"fixedX":75.09943161532797},{"id":"枝袖","name":"枝袖","avatar":"https://fzh0122.github.io/shimenzupu/images/枝袖.jpg","masterId":null,"mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":["地表最奶的龙"],"fixedX":-461.76319235324956},{"id":"言尽次","name":"言尽次","avatar":"https://fzh0122.github.io/shimenzupu/images/言尽次.jpg","masterId":null,"mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":["地表最奶的龙"],"fixedX":-197.1680922001599},{"id":"魏惬意","name":"魏惬意","avatar":"https://fzh0122.github.io/shimenzupu/images/未惬意.jpg","masterId":null,"mainId":null,"bwsts":["|昙夢|"],"jys":[],"xys":[],"qys":[],"fixedX":1304.2526439568253},{"id":"卜未时","name":"卜未时","avatar":"https://fzh0122.github.io/shimenzupu/images/卜未时.jpg","masterId":null,"mainId":null,"bwsts":["|昙夢|"],"jys":[],"xys":[],"qys":[],"fixedX":1433.3919328910745},{"id":"稀屿","name":"稀屿","avatar":"https://fzh0122.github.io/shimenzupu/images/稀屿.jpg","masterId":"越颖","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[]},{"id":"雨天易睡","name":"雨天易睡","avatar":"https://fzh0122.github.io/shimenzupu/images/雨天.jpg","masterId":"地表最奶的龙","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[]},{"id":"敌意","name":"敌意","avatar":"https://fzh0122.github.io/shimenzupu/images/敌意.jpg","masterId":"燕山晦明","mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":[],"fixedX":266.38638433047623},{"id":"祈矅","name":"祈矅","avatar":"https://fzh0122.github.io/shimenzupu/images/祈曜.jpg","masterId":null,"mainId":null,"bwsts":["燕山晦明"],"jys":[],"xys":[],"qys":[],"fixedX":441.6672802131925},{"id":"陪穗穗看海","name":"穗穗","avatar":"https://fzh0122.github.io/shimenzupu/images/穗穗.jpg","masterId":null,"mainId":null,"bwsts":[],"jys":[],"xys":[],"qys":["小小哞哞"],"fixedX":1175.113355022577}];
+/* 封面谢幕独立于此，任何后续脚本出错都不影响 */
+(function(){
+  const marks = ['⭐','🎀','💜','🌙','✨','🖤','🌸','⭐','✨','🎀'];
+  const intro = document.getElementById('intro');
+  marks.forEach(m=>{
+    const s = document.createElement('div');
+    s.className='istar'; s.textContent=m;
+    s.style.left = (6+Math.random()*88)+'%';
+    s.style.top = (5+Math.random()*80)+'%';
+    s.style.animationDelay = (Math.random()*1.4)+'s';
+    intro.appendChild(s);
+  });
+  setTimeout(()=>intro.classList.add('out'), 2400);
+  setTimeout(()=>intro.remove(), 3300);
+})();
+</script>
 
-let camera = { x: 50, y: 50, scale: 0.95 };
-let searchKey = "";
-const cvs = document.getElementById('mainCanvas');
-const ctx = cvs.getContext('2d');
-let hitRegions = [];
-let draggedNodeId = null;
-let dragOffsetX = 0;
-let currentDragX = 0;
-let isDraggingNode = false;
-let isDragCanvas = false;
-let startP = { x: 0, y: 0 };
-let lastTouch = {};
-const CARD_W = 120, CARD_H = 80, GAP_X = 100, GAP_Y = 280;
+<!-- 顶栏 -->
+<div id="topbar">
+  <div id="title"><h1>🔥 滔滔</h1></div>
+  <input id="search" placeholder="找小伙伴…">
+  <button class="tbtn" id="undoBtn" title="撤销 (Ctrl+Z)">↩ 撤销</button>
+  <button class="tbtn" id="themeBtn" title="切换 夜·库洛米 / 昼·美乐蒂">🌙</button>
+  <button class="tbtn" id="modeBtn" title="切换观察/编辑模式">✎ 编辑</button>
+  <button class="tbtn" id="sealBtn" title="工具">🎀</button>
+</div>
 
-function numToChinese(num) {
-    const arr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
-    return arr[num - 1] || num + '';
-}
+<!-- 工具面板 -->
+<div id="panel">
+  <h4 class="edit-only">伙 伴</h4>
+  <div class="row edit-only">
+    <button class="pbtn" id="addPerson">➕ 新伙伴</button>
+    <button class="pbtn" id="addRel">🔗 建关系</button>
+  </div>
+  <h4 class="edit-only">云 端</h4>
+  <div class="row edit-only">
+    <button class="pbtn" id="pubBtn">☁ 发布到 GitHub</button>
+    <button class="pbtn" id="ghCfgBtn">⚙ 云端设置</button>
+  </div>
+  <div class="edit-only" id="cloudStatus" style="font-size:11px;color:var(--ink-soft);margin-top:4px"></div>
+  <h4>数 据</h4>
+  <div class="row">
+    <button class="pbtn" id="exportBtn">💾 导出 JSON</button>
+    <button class="pbtn edit-only" id="importBtn">📂 导入 JSON</button>
+    <button class="pbtn danger edit-only" id="resetBtn">🗑 恢复初始</button>
+  </div>
+  <h4>图 例</h4>
+  <div>
+    <div class="legend-item"><span class="lg-dot" style="background:#ffd166"></span>结义</div>
+    <div class="legend-item"><span class="lg-dot" style="background:#ff6b9d"></span>侠缘</div>
+    <div class="legend-item"><span class="lg-dot" style="background:#b19cd9"></span>师徒（箭头 师→徒）</div>
+    <div class="legend-item"><span class="lg-dot" style="background:#8fd4c1"></span>编外师徒（虚线）</div>
+  </div>
+</div>
 
-function solveGenerations(){
-    const gens=new Map();nodes.forEach(n=>gens.set(n.id,0));
-    for(let i=0;i<30;i++){
-        nodes.forEach(n=>{
-            if(n.masterId&&gens.has(n.masterId))gens.set(n.id,gens.get(n.masterId)+1);
-            if(n.bwsts&&n.bwsts.length)n.bwsts.forEach(m=>gens.has(m)&&gens.set(n.id,Math.max(gens.get(n.id),gens.get(m)+1)));
-            if(n.mainId&&gens.has(n.mainId))gens.set(n.id,gens.get(n.mainId));
-        });
-    }
-    for(let i=0;i<10;i++){
-        nodes.forEach(n=>{
-            let p=[...(n.jys||[]),...(n.xys||[]),...(n.qys||[])];
-            p.forEach(pid=>{
-                if(gens.has(pid)){
-                    let g1=gens.get(n.id),g2=gens.get(pid);
-                    if(g1!==g2){let mg=Math.max(g1,g2);gens.set(n.id,mg);gens.set(pid,mg);}
-                }
-            });
-        });
-    }
-    return gens;
-}
-const nodePos=new Map();
-function layoutRecursive(pid,pcx,py){
-    let ch=nodes.filter(x=>x.masterId===pid||(x.bwsts&&x.bwsts.includes(pid)));
-    if(!ch.length)return;
-    let tw=ch.length*(CARD_W+GAP_X)-GAP_X,sx=pcx-tw/2;
-    ch.forEach(c=>{
-        let x=c.fixedX!==undefined?c.fixedX:sx;
-        nodePos.set(c.id,{x:x,y:py+GAP_Y,w:CARD_W,h:CARD_H});
-        layoutRecursive(c.id,x+CARD_W/2,py+GAP_Y);
-        sx+=CARD_W+GAP_X;
-    });
-}
-function layout(){
-    nodePos.clear();
-    if(!nodes.length){draw();return;}
-    let gens=solveGenerations();
-    let root=nodes.filter(x=>!x.mainId&&!x.masterId&&(!x.bwsts||!x.bwsts.length));
-    let realRoot=root.filter(x=>{let p=[...(x.jys||[]),...(x.xys||[]),...(x.qys||[])];return !p.length;});
-    let rx=300;
-    realRoot.forEach(r=>{
-        let x=r.fixedX!==undefined?r.fixedX:rx;
-        nodePos.set(r.id,{x:x,y:120,w:CARD_W,h:CARD_H});
-        layoutRecursive(r.id,x+CARD_W/2,120);
-        rx+=500;
-    });
-    let peer=nodes.filter(x=>!nodePos.has(x.id)&&!x.mainId&&((x.jys?.length||0)+(x.xys?.length||0)+(x.qys?.length||0)>0));
-    peer.forEach(n=>{
-        let g=gens.get(n.id)||0,y=120+g*GAP_Y;
-        if(!nodePos.has(n.id)){let x=n.fixedX!==undefined?n.fixedX:rx;nodePos.set(n.id,{x,y,w:CARD_W,h:CARD_H});rx+=200;}
-    });
-    nodes.forEach(n=>{
-        if(n.mainId&&nodePos.has(n.mainId)&&!nodePos.has(n.id)){
-            let m=nodePos.get(n.mainId);
-            nodePos.set(n.id,{x:m.x+m.w+10,y:m.y+20,w:CARD_W*0.6,h:CARD_H*0.6});
-        }
-    });
-    draw();
-}
-function drawFamilyLine(mid,cids){
-    if(!nodePos.has(mid)||!cids.length)return;
-    let mp=nodePos.get(mid),mx=mp.x+mp.w/2,my=mp.y+mp.h;
-    let ch=cids.filter(id=>nodePos.has(id)).map(id=>{
-        let p=nodePos.get(id),nd=nodes.find(x=>x.id===id);
-        return {
-            id,
-            x:p.x+p.w/2,
-            y:p.y,
-            isBwst: nd.bwsts?.includes(mid) && nd.masterId !== mid
-        };
-    });
-    if(!ch.length)return;
+<div id="hint">拖动旋转 · 滚轮缩放 · 点小伙伴聚焦</div>
+<div id="drawer"></div>
 
-    let sortedAll = [...ch].sort((a,b)=>a.x - b.x);
-    let formalList = sortedAll.filter(item => !item.isBwst);
-    let rankMap = {};
-    formalList.forEach((item, idx) => {
-        let text;
-        if(idx === 0) text = "大徒弟";
-        else if(idx === formalList.length - 1) text = "小徒弟";
-        else text = numToChinese(idx + 1) + "徒弟";
-        rankMap[item.id] = text;
-    });
+<!-- 人物表单 -->
+<div class="modal" id="personModal">
+  <div class="mbox">
+    <h3 id="pmTitle">新伙伴</h3>
+    <label>名字（唯一）</label><input id="pmId">
+    <label>备注</label><input id="pmName">
+    <label>头像链接</label><input id="pmAvatar" placeholder="https://…（或用抽屉里的上传按钮）">
+    <div class="mrow">
+      <button class="tbtn btn-primary" id="pmSave">确认</button>
+      <button class="tbtn" onclick="closeModal('personModal')">取消</button>
+    </div>
+  </div>
+</div>
 
-    if(ch.length===1){
-        let c=ch[0];
-        ctx.save();
-        ctx.beginPath();
-        ctx.setLineDash(c.isBwst?[4,4]:[]);
-        ctx.lineWidth=c.isBwst?1.5:2.2;
-        ctx.strokeStyle='#111';
-        ctx.moveTo(mx,my);
-        ctx.lineTo(c.x,c.y);
-        ctx.stroke();
+<!-- 关系表单 -->
+<div class="modal" id="relModal">
+  <div class="mbox">
+    <h3>建立关系</h3>
+    <label>关系类型</label>
+    <select id="rmType">
+      <option value="jieyi">🟡 结义</option>
+      <option value="xiayuan">🌸 侠缘</option>
+      <option value="shifu">🟣 师徒</option>
+      <option value="biwai">🟢 编外师徒</option>
+    </select>
+    <label id="rmALabel">伙伴 A</label><select id="rmA"></select>
+    <label id="rmBLabel">伙伴 B</label><select id="rmB"></select>
+    <div id="rmHint" style="font-size:12px;color:var(--ink-soft);min-height:16px"></div>
+    <div class="mrow">
+      <button class="tbtn btn-primary" id="rmSave">确认建立</button>
+      <button class="tbtn" onclick="closeModal('relModal')">取消</button>
+    </div>
+  </div>
+</div>
 
-        if(!c.isBwst && rankMap[c.id]){
-            const text = rankMap[c.id];
-            const centerY = (my + c.y) / 2;
-            const textX = c.x + 25;
-            ctx.fillStyle = '#7c5d42';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.textAlign = 'left';
-            for(let i = 0; i < text.length; i++){
-                ctx.fillText(text[i], textX, centerY - (text.length / 2 - i) * 16);
-            }
-        }
-        ctx.restore();
-        return;
-    }
+<!-- GitHub 云端设置 -->
+<div class="modal" id="ghModal">
+  <div class="mbox">
+    <h3>⚙ GitHub 云端设置</h3>
+    <div style="font-size:12px;color:var(--ink-soft);margin-bottom:8px;line-height:1.7">
+      仅编辑者需要设置，令牌只保存在自己的浏览器里。<br>
+      令牌：GitHub → Settings → Developer settings → Personal access tokens (classic)，勾 <b>public_repo</b>。
+    </div>
+    <label>仓库所有者</label><input id="ghOwner" placeholder="用户名">
+    <label>仓库名</label><input id="ghRepo" placeholder="仓库名">
+    <label>分支</label><input id="ghBranch" placeholder="main">
+    <label>访问令牌（PAT）</label><input id="ghToken" type="password" placeholder="ghp_…">
+    <div class="mrow">
+      <button class="tbtn btn-primary" id="ghSave">保存设置</button>
+      <button class="tbtn" onclick="closeModal('ghModal')">取消</button>
+    </div>
+  </div>
+</div>
 
-    let cy=ch[0].y,hy=cy-80,minx=Math.min(...ch.map(c=>c.x)),maxx=Math.max(...ch.map(c=>c.x));
-    ctx.save();
-    ctx.lineWidth=2.2;
-    ctx.strokeStyle='#111';
-    ctx.beginPath();
-    ctx.moveTo(mx,my);
-    ctx.lineTo(mx,hy);
-    ctx.lineTo((minx+maxx)/2,hy);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(minx,hy);
-    ctx.lineTo(maxx,hy);
-    ctx.stroke();
+<div id="toast"></div>
 
-    ch.forEach(c=>{
-        ctx.beginPath();
-        ctx.setLineDash(c.isBwst?[4,4]:[]);
-        ctx.lineWidth=c.isBwst?1.5:2.2;
-        ctx.moveTo(c.x,hy);
-        ctx.lineTo(c.x,c.y);
-        ctx.stroke();
-
-        if(!c.isBwst && rankMap[c.id]){
-            const text = rankMap[c.id];
-            const centerY = (hy + c.y) / 2;
-            const textX = c.x + 25;
-            ctx.fillStyle = '#7c5d42';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.textAlign = 'left';
-            for(let i = 0; i < text.length; i++){
-                ctx.fillText(text[i], textX, centerY - (text.length / 2 - i) * 16);
-            }
-        }
-    });
-    ctx.restore();
-}
-function drawSecRel(){
-    let gens=solveGenerations();
-    nodes.forEach(n=>{
-        let p=nodePos.get(n.id);if(!p)return;
-        let cx1=p.x+p.w/2,cy1=p.y+p.h/2;
-        if(n.jys)n.jys.forEach(j=>{
-            if(j>n.id&&gens.get(j)===gens.get(n.id)&&nodePos.has(j)){
-                let tp=nodePos.get(j),cx2=tp.x+tp.w/2,cy2=tp.y+tp.h/2;
-                ctx.beginPath();ctx.strokeStyle='rgba(179,134,0,0.6)';ctx.lineWidth=2;
-                let ctrY=Math.max(cy1,cy2)+80;
-                ctx.moveTo(cx1,cy1+20);ctx.quadraticCurveTo((cx1+cx2)/2,ctrY,cx2,cy2+20);ctx.stroke();
-            }
-        });
-        if(n.xys)n.xys.forEach(x=>{
-            if(x>n.id&&gens.get(x)===gens.get(n.id)&&nodePos.has(x)){
-                let tp=nodePos.get(x),cx2=tp.x+tp.w/2,cy2=tp.y+tp.h/2;
-                ctx.beginPath();ctx.strokeStyle='rgba(255,77,121,0.6)';ctx.lineWidth=2;
-                let ctrY=Math.max(cy1,cy2)+80;
-                ctx.moveTo(cx1,cy1+20);ctx.quadraticCurveTo((cx1+cx2)/2,ctrY,cx2,cy2+20);ctx.stroke();
-            }
-        });
-        if(n.qys)n.qys.forEach(q=>{
-            if(q>n.id&&gens.get(q)===gens.get(n.id)&&nodePos.has(q)){
-                let tp=nodePos.get(q),cx2=tp.x+tp.w/2,cy2=tp.y+tp.h/2;
-                ctx.beginPath();ctx.strokeStyle='rgba(0,102,204,0.6)';ctx.lineWidth=2;
-                let ctrY=Math.max(cy1,cy2)+80;
-                ctx.moveTo(cx1,cy1+20);ctx.quadraticCurveTo((cx1+cx2)/2,ctrY,cx2,cy2+20);ctx.stroke();
-            }
-        });
-    });
-}
-function draw(){
-    hitRegions=[];ctx.clearRect(0,0,cvs.width,cvs.height);
-    ctx.save();ctx.translate(camera.x,camera.y);ctx.scale(camera.scale,camera.scale);
-    let mg=new Map();
-    nodes.forEach(n=>{
-        if(n.masterId){if(!mg.has(n.masterId))mg.set(n.masterId,[]);mg.get(n.masterId).push(n.id);}
-        if(n.bwsts&&n.bwsts.length)n.bwsts.forEach(b=>{if(!mg.has(b))mg.set(b,[]);if(!mg.get(b).includes(n.id))mg.get(b).push(n.id);});
-    });
-    mg.forEach((cids,mid)=>drawFamilyLine(mid,cids));
-    drawSecRel();
-    nodePos.forEach((pos,id)=>{
-        let n=nodes.find(x=>x.id===id);if(!n)return;
-        let rx=pos.x;
-        if(isDraggingNode&&draggedNodeId===id&&!n.mainId)rx=currentDragX;
-        let sel=searchKey&&n.id.includes(searchKey),small=!!n.mainId;
-        ctx.save();ctx.shadowBlur=draggedNodeId===id?18:4;ctx.shadowColor='rgba(0,0,0,0.08)';
-        ctx.fillStyle='#fff';ctx.beginPath();ctx.roundRect(rx,pos.y,pos.w,pos.h,10);ctx.fill();
-        if(sel){ctx.strokeStyle='#ff4d79';ctx.lineWidth=3;ctx.stroke();}
-        ctx.shadowBlur=0;
-        let avs=small?22:36,avx=rx+pos.w/2-avs/2,avy=pos.y+8;
-        if(n.avatar){
-            let img=new Image();img.src=n.avatar;
-            ctx.save();ctx.beginPath();ctx.arc(avx+avs/2,avy+avs/2,avs/2,0,Math.PI*2);ctx.clip();
-            ctx.drawImage(img,avx,avy,avs,avs);ctx.restore();
-        }else{
-            ctx.beginPath();ctx.arc(avx+avs/2,avy+avs/2,avs/2,0,Math.PI*2);ctx.fillStyle='#ddd';ctx.fill();
-        }
-        let cx=rx+pos.w/2,by=small?pos.y+48:pos.y+56;
-        ctx.fillStyle='#3d2f20';ctx.font=`bold ${small?9:13}px sans-serif`;ctx.textAlign='center';ctx.fillText(n.id,cx,by);
-        ctx.fillStyle='#888';ctx.font=`${small?8:11}px sans-serif`;ctx.fillText(n.name||'-',cx,by+14);
-        ctx.strokeStyle='#e2dbcd';ctx.lineWidth=1;ctx.stroke();
-        if(!small){
-            ctx.font='10px serif';ctx.fillText('✏️',rx+15,pos.y+pos.h-12);
-            ctx.fillText('🗑️',rx+pos.w-15,pos.y+pos.h-12);
-        }
-        ctx.restore();
-        hitRegions.push({id:n.id,x:rx,y:pos.y,w:pos.w,h:pos.h});
-    });
-    ctx.restore();
-}
-
-cvs.onmousedown=e=>{
-    let rect=cvs.getBoundingClientRect();
-    let mx=(e.clientX-rect.left-camera.x)/camera.scale;
-    let my=(e.clientY-rect.top-camera.y)/camera.scale;
-    let hit=hitRegions.find(r=>mx>r.x&&mx<r.x+r.w&&my>r.y&&my<r.y+r.h);
-    if(hit){
-        let nd=nodes.find(x=>x.id===hit.id);if(nd&&nd.mainId)return;
-        if(mx>hit.x+hit.w-28&&my>hit.y+hit.h-28){deleteNode(hit.id);return;}
-        if(mx<hit.x+28&&my>hit.y+hit.h-28){editNode(hit.id);return;}
-        draggedNodeId=hit.id;isDraggingNode=true;dragOffsetX=mx-hit.x;currentDragX=hit.x;return;
-    }
-    isDragCanvas=true;startP={x:e.clientX,y:e.clientY};
-};
-window.onmousemove=e=>{
-    if(isDraggingNode&&draggedNodeId){
-        let rect=cvs.getBoundingClientRect();
-        let mx=(e.clientX-rect.left-camera.x)/camera.scale;
-        currentDragX=mx-dragOffsetX;draw();return;
-    }
-    if(isDragCanvas){
-        camera.x+=e.clientX-startP.x;camera.y+=e.clientY-startP.y;
-        startP={x:e.clientX,y:e.clientY};draw();
-    }
-};
-window.onmouseup=()=>{
-    if(isDraggingNode&&draggedNodeId){
-        let pos=nodePos.get(draggedNodeId),nd=nodes.find(x=>x.id===draggedNodeId);
-        if(pos&&nd){pos.x=currentDragX;nd.fixedX=currentDragX;}
-    }
-    isDraggingNode=false;isDragCanvas=false;draw();
-};
-cvs.onwheel=e=>{
-    e.preventDefault();let d=e.deltaY>0?0.9:1.1;
-    camera.scale=Math.max(0.15,Math.min(3,camera.scale*d));draw();
+<script src="lib/three.min.js"></script>
+<script src="lib/OrbitControls.js"></script>
+<script>
+/* ================= 初始数据（示例，可导入替换） ================= */
+const INITIAL_DATA = {
+ "people": [
+  {"id":"桃桃","name":"","avatar":"","x":null,"z":null},
+  {"id":"栗子","name":"","avatar":"","x":null,"z":null},
+  {"id":"年糕","name":"","avatar":"","x":null,"z":null},
+  {"id":"布丁","name":"","avatar":"","x":null,"z":null},
+  {"id":"奶盖","name":"","avatar":"","x":null,"z":null},
+  {"id":"团团","name":"","avatar":"","x":null,"z":null},
+  {"id":"圆圆","name":"","avatar":"","x":null,"z":null},
+  {"id":"芝麻","name":"","avatar":"","x":null,"z":null},
+  {"id":"花椒","name":"","avatar":"","x":null,"z":null},
+  {"id":"可乐","name":"","avatar":"","x":null,"z":null},
+  {"id":"雪碧","name":"","avatar":"","x":null,"z":null},
+  {"id":"豆芽","name":"","avatar":"","x":null,"z":null},
+  {"id":"毛豆","name":"","avatar":"","x":null,"z":null},
+  {"id":"西米","name":"","avatar":"","x":null,"z":null},
+  {"id":"露比","name":"","avatar":"","x":null,"z":null}
+ ],
+ "edges": [
+  {"a":"桃桃","b":"栗子","type":"xiayuan"},
+  {"a":"桃桃","b":"年糕","type":"jieyi"},
+  {"a":"栗子","b":"年糕","type":"jieyi"},
+  {"a":"布丁","b":"奶盖","type":"xiayuan"},
+  {"a":"团团","b":"圆圆","type":"jieyi"},
+  {"a":"芝麻","b":"花椒","type":"jieyi"},
+  {"a":"可乐","b":"雪碧","type":"xiayuan"},
+  {"a":"豆芽","b":"毛豆","type":"xiayuan"},
+  {"a":"西米","b":"露比","type":"jieyi"},
+  {"a":"桃桃","b":"奶盖","type":"jieyi"},
+  {"a":"圆圆","b":"露比","type":"xiayuan"},
+  {"a":"花椒","b":"可乐","type":"jieyi"},
+  {"a":"栗子","b":"西米","type":"jieyi"},
+  {"a":"团团","b":"桃桃","type":"shifu"},
+  {"a":"桃桃","b":"豆芽","type":"biwai"}
+ ]
 };
 
-cvs.addEventListener('touchstart', e => {
-    e.preventDefault();
-    const rect = cvs.getBoundingClientRect();
-    const touches = e.touches;
+/* ================= 常量与状态 ================= */
+const LS_KEY = "campfire_v1";
+const REL_COLOR = { jieyi:0xffd166, xiayuan:0xff6b9d, shifu:0xb19cd9, biwai:0x8fd4c1 };
+const REL_CSS   = { jieyi:"#ffd166", xiayuan:"#ff6b9d", shifu:"#b19cd9", biwai:"#8fd4c1" };
+const REL_NAME  = { jieyi:"结义", xiayuan:"侠缘", shifu:"师徒", biwai:"编外师徒" };
+const REL_DIR   = { shifu:true, biwai:true };   // 有向关系：a = 师父，b = 徒弟（线上箭头 师→徒）
+const CIRCLE_R = 9, GROUND_R = 17;
+/* 小动物的物种与糖果色（loadData 迁移要用，定义须在 data 加载前） */
+const SPECIES_KEYS = ['bunny','dog','cat','bear','fox'];
+const SPECIES_NAME = { bunny:'垂耳兔', dog:'小狗', cat:'小猫', bear:'小熊', fox:'小狐狸' };
+const PALETTE = [0xffd9e4, 0xdcc8f5, 0xc8e2ff, 0xfff0c0, 0xd5f2cc, 0xffe2c8, 0xf7c9d9, 0xcdeee6, 0xf5e6d0, 0xe8d9ff];
+function randomSpecies(){ return SPECIES_KEYS[Math.floor(Math.random()*SPECIES_KEYS.length)]; }
+function randomColor(){ return PALETTE[Math.floor(Math.random()*PALETTE.length)]; }
 
-    if (touches.length === 1) {
-        const x = touches[0].clientX;
-        const y = touches[0].clientY;
-        const mx = (x - rect.left - camera.x) / camera.scale;
-        const my = (y - rect.top - camera.y) / camera.scale;
-        lastTouch = { x, y };
-        const hit = hitRegions.find(r => mx > r.x && mx < r.x + r.w && my > r.y && my < r.y + r.h);
-        if (hit) return;
-        isDragCanvas = true;
-    }
-    if (touches.length === 2) {
-        const d = Math.hypot(
-            touches[0].clientX - touches[1].clientX,
-            touches[0].clientY - touches[1].clientY
-        );
-        lastTouch.dist = d;
-    }
-});
+let data = loadData();
+let selectedId = null, searchHits = new Set();
+let undoStack = [];
+let editMode = false;
+let theme = "night";
 
-cvs.addEventListener('touchmove', e => {
-    e.preventDefault();
-    const touches = e.touches;
-    if (touches.length === 1 && isDragCanvas) {
-        const x = touches[0].clientX;
-        const y = touches[0].clientY;
-        camera.x += x - lastTouch.x;
-        camera.y += y - lastTouch.y;
-        lastTouch = { x, y };
-        draw();
-    }
-    if (touches.length === 2) {
-        const d = Math.hypot(
-            touches[0].clientX - touches[1].clientX,
-            touches[0].clientY - touches[1].clientY
-        );
-        const scale = d / lastTouch.dist;
-        camera.scale = Math.max(0.15, Math.min(3, camera.scale * scale));
-        lastTouch.dist = d;
-        draw();
-    }
-});
-
-cvs.addEventListener('touchend', e => {
-    isDragCanvas = false;
-    lastTouch = {};
-});
-
-document.getElementById('addNode').onclick=()=>{
-    let id=prompt("输入ID");if(!id)return;
-    if(nodes.some(x=>x.id===id)){alert("ID已存在");return;}
-    let name=prompt("备注")||"";
-    let ava=prompt("头像链接")||"";
-    nodes.push({id,name,avatar:ava,masterId:null,mainId:null,bwsts:[],jys:[],xys:[],qys:[]});
-    layout();
-};
-document.getElementById('addRel').onclick=()=>{
-    if(nodes.length<2){alert("至少添加两人");return;}
-    let a=document.getElementById('selA'),b=document.getElementById('selB');
-    a.innerHTML=b.innerHTML=nodes.map(n=>`<option value="${n.id}">${n.id}</option>`).join('');
-    document.getElementById('relModal').style.display='flex';
-};
-function saveRelation(){
-    let a=document.getElementById('selA').value,b=document.getElementById('selB').value,tp=document.getElementById('relType').value;
-    if(a===b){alert("不能选自身");return;}
-    let na=nodes.find(x=>x.id===a),nb=nodes.find(x=>x.id===b);
-    if(!na.bwsts)na.bwsts=[];if(!na.jys)na.jys=[];if(!na.xys)na.xys=[];if(!na.qys)na.qys=[];
-    if(tp==='st')na.masterId=b;
-    else if(tp==='xh')na.mainId=b;
-    else if(tp==='bwst'&&!na.bwsts.includes(b))na.bwsts.push(b);
-    else if(tp==='jy'){if(!na.jys.includes(b))na.jys.push(b);if(!nb.jys.includes(a))nb.jys.push(a);}
-    else if(tp==='xy'){if(!na.xys.includes(b))na.xys.push(b);if(!nb.xys.includes(a))nb.xys.push(a);}
-    else if(tp==='qy'){if(!na.qys.includes(b))na.qys.push(b);if(!nb.qys.includes(a))nb.qys.push(a);}
-    layout();closeModal();
+/* ================= 数据读写 ================= */
+function loadData(){
+  let d = null;
+  try{
+    const s = localStorage.getItem(LS_KEY);
+    if(s){ const p = JSON.parse(s); if(p && p.people && p.edges) d = p; }
+  }catch(e){}
+  if(!d) d = JSON.parse(JSON.stringify(INITIAL_DATA));
+  // 迁移：过滤已废弃的关系类型（亲友/小号）
+  d.edges = (d.edges||[]).filter(e=>REL_NAME[e.type]);
+  // 迁移：给没有物种/配色的老数据随机分配并固化
+  let changed = false;
+  d.people.forEach(p=>{
+    if(!p.species){ p.species = randomSpecies(); changed = true; }
+    if(p.color==null){ p.color = randomColor(); changed = true; }
+  });
+  if(changed) localStorage.setItem(LS_KEY, JSON.stringify(d));
+  return d;
 }
-function editNode(id){
-    let n=nodes.find(x=>x.id===id);
-    let nm=prompt("修改备注",n.name);
-    let av=prompt("修改头像",n.avatar||"");
-    if(nm!==null)n.name=nm;if(av!==null)n.avatar=av;layout();
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(data)); cloudDirty = true; updateCloudStatus(); }
+function snapshot(){ undoStack.push(JSON.stringify(data)); if(undoStack.length>30) undoStack.shift(); }
+function undo(){
+  if(!undoStack.length){ toast("没有可撤销的操作"); return; }
+  data = JSON.parse(undoStack.pop()); save(); selectedId=null; closeDrawer();
+  rebuildPeople(); rebuildLines(); toast("已撤销");
 }
-function deleteNode(id){
-    if(!confirm(`删除${id}？`))return;
-    nodes=nodes.filter(x=>x.id!==id);
-    nodes.forEach(n=>{
-        if(n.masterId===id)n.masterId=null;
-        if(n.mainId===id)n.mainId=null;
-        if(n.bwsts)n.bwsts=n.bwsts.filter(x=>x!==id);
-        if(n.jys)n.jys=n.jys.filter(x=>x!==id);
-        if(n.xys)n.xys=n.xys.filter(x=>x!==id);
-        if(n.qys)n.qys=n.qys.filter(x=>x!==id);
-    });
-    layout();
+function person(id){ return data.people.find(p=>p.id===id); }
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove('show'),1800);
 }
-function closeModal(){document.getElementById('relModal').style.display='none';}
-function resetCam(){camera={x:50,y:50,scale:0.6};draw();}
-function clearData(){if(confirm("清空全部数据？")){nodes=[];layout();}}
-document.getElementById('searchInp').oninput=e=>searchKey=e.target.value,draw();
+function esc(s){ return String(s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
-document.getElementById('saveData').onclick=()=>{
-    let str=JSON.stringify(nodes);
-    let blob=new Blob([str],{type:'text/plain'});
-    let url=URL.createObjectURL(blob);
-    let a=document.createElement('a');
-    a.href=url;a.download='图谱数据.json';a.click();
-    URL.revokeObjectURL(url);
-    alert("数据保存成功");
+/* ================= GitHub 云端 ================= */
+let cloudDirty = false;
+function ghCfg(){ try{ return JSON.parse(localStorage.getItem('campfire_gh')||'{}'); }catch(e){ return {}; } }
+function updateCloudStatus(msg){
+  const el = document.getElementById('cloudStatus'); if(!el) return;
+  const c = ghCfg();
+  el.textContent = msg ?? (c.owner ? (cloudDirty?'● 有未发布的修改':'✓ 已与云端一致') : '未配置云端');
+}
+function openGhModal(){
+  const c = ghCfg();
+  document.getElementById('ghOwner').value = c.owner||'';
+  document.getElementById('ghRepo').value = c.repo||'';
+  document.getElementById('ghBranch').value = c.branch||'main';
+  document.getElementById('ghToken').value = c.token||'';
+  openModal('ghModal');
+}
+document.getElementById('ghCfgBtn').onclick = openGhModal;
+document.getElementById('ghSave').onclick = ()=>{
+  const c = { owner:ghOwner.value.trim(), repo:ghRepo.value.trim(),
+    branch:ghBranch.value.trim()||'main', token:ghToken.value.trim() };
+  localStorage.setItem('campfire_gh', JSON.stringify(c));
+  closeModal('ghModal'); updateCloudStatus(); toast("云端设置已保存");
 };
-document.getElementById('loadData').onclick=()=>{
-    let ip=document.createElement('input');ip.type='file';ip.accept='.json';
-    ip.onchange=e=>{
-        let f=e.target.files[0];if(!f)return;
-        let r=new FileReader();
-        r.onload=ev=>{
-            try{nodes=JSON.parse(ev.target.result);layout();alert("数据读取完成");}
-            catch{alert("文件格式错误");}
-        };
-        r.readAsText(f);
+async function publish(){
+  const c = ghCfg();
+  if(!c.owner || !c.repo || !c.token){ openGhModal(); toast("请先完成云端设置"); return; }
+  updateCloudStatus('☁ 发布中…');
+  try{
+    const api = `https://api.github.com/repos/${c.owner}/${c.repo}/contents/data.json`;
+    const headers = { 'Authorization':'Bearer '+c.token, 'Accept':'application/vnd.github+json' };
+    const get = await fetch(api+'?ref='+(c.branch||'main'), {headers});
+    if(get.status===401||get.status===403){ updateCloudStatus(); toast("令牌无效或无权限"); return; }
+    const sha = get.ok ? (await get.json()).sha : undefined;
+    const content = btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(data,null,1))));
+    const put = await fetch(api, { method:'PUT', headers,
+      body: JSON.stringify({ message:'篝火营地更新 '+new Date().toLocaleString('zh-CN'), content, sha, branch:c.branch||'main' }) });
+    if(!put.ok){ updateCloudStatus(); toast("发布失败（"+put.status+"）"); return; }
+    cloudDirty = false; updateCloudStatus(); toast("☁ 已发布，约 1 分钟后全员可见");
+  }catch(e){ updateCloudStatus(); toast("网络异常，发布失败"); }
+}
+document.getElementById('pubBtn').onclick = publish;
+
+/* ---- 头像上传 ---- */
+function compressImage(file){
+  return new Promise((res, rej)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const s = Math.min(1, 256/Math.max(img.width, img.height));
+      const w = Math.max(1, Math.round(img.width*s)), h = Math.max(1, Math.round(img.height*s));
+      const cv = document.createElement('canvas'); cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(img.src);
+      res(cv.toDataURL('image/jpeg', 0.85).split(',')[1]);
     };
-    ip.click();
-};
-
-function resizeCanvas() {
-  const dpr = window.devicePixelRatio || 1;
-  const container = document.getElementById('container');
-  const w = container.clientWidth;
-  const h = container.clientHeight;
-
-  cvs.width = w * dpr;
-  cvs.height = h * dpr;
-  cvs.style.width = w + 'px';
-  cvs.style.height = h + 'px';
-
-  ctx.scale(dpr, dpr);
-  layout();
+    img.onerror = rej;
+    img.src = URL.createObjectURL(file);
+  });
+}
+async function uploadAvatar(id, file){
+  const c = ghCfg();
+  if(!c.owner || !c.repo || !c.token){ openGhModal(); toast("上传头像需先完成云端设置"); return; }
+  toast("🖼 压缩上传中…");
+  try{
+    const b64 = await compressImage(file);
+    const path = 'avatars/' + encodeURIComponent(id) + '.jpg';
+    const api = `https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}`;
+    const headers = { 'Authorization':'Bearer '+c.token, 'Accept':'application/vnd.github+json' };
+    const get = await fetch(api+'?ref='+(c.branch||'main'), {headers});
+    const sha = get.ok ? (await get.json()).sha : undefined;
+    const put = await fetch(api, { method:'PUT', headers,
+      body: JSON.stringify({ message:'头像更新 '+id, content:b64, sha, branch:c.branch||'main' }) });
+    if(!put.ok){ toast("头像上传失败（"+put.status+"）"); return; }
+    snapshot();
+    person(id).avatar = path + '?v=' + Date.now();
+    save(); rebuildPeople();
+    await publish();
+    toast("🖼 头像已更新并发布");
+  }catch(e){ toast("头像上传失败"); }
+}
+/* 打开时拉取线上数据 */
+async function refreshRemote(){
+  try{
+    const r = await fetch('data.json?t='+Date.now());
+    if(!r.ok) return;
+    const d = await r.json();
+    if(!d.people || !d.edges) return;
+    if(cloudDirty){ updateCloudStatus('● 有未发布的本地修改'); return; }
+    data = d; localStorage.setItem(LS_KEY, JSON.stringify(data));
+    cloudDirty = false; rebuildPeople(); rebuildLines(); updateCloudStatus();
+  }catch(e){}
 }
 
-window.onload = () => {
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
+/* ================= 3D 场景 ================= */
+let scene, camera, renderer, controls, raycaster, pointer;
+let peopleGroup, linesGroup, labelGroup, fireLight, stars, fireParticles, ground, moon, sun;
+const sprites = {};        // id -> THREE.Sprite
+const edgeLines = [];      // {line, edge, mid}
+let clock;
+
+const THEMES = {
+  day:   { bg:0xffe8ef, fog:0xffe8ef, ground:0x9ed88f, ring:0x82bf74, amb:0xfff0f2, ambI:.78,
+           fireI:1.0, stars:false, moonLight:0xffe9c9, dirI:.32 },
+  night: { bg:0x171221, fog:0x171221, ground:0x24402a, ring:0x3d5c42, amb:0x5a4a7a, ambI:.6,
+           fireI:2.4, stars:true,  moonLight:0x8a7ab8, dirI:.5 },
 };
+let ambLight, dirLight;
+
+function init3D(){
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, .1, 200);
+  camera.position.set(0, 15, 26);
+  renderer = new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  document.body.appendChild(renderer.domElement);
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.target.set(0, 3.5, 0);
+  controls.enableDamping = true; controls.dampingFactor = .06;
+  controls.maxPolarAngle = Math.PI/2 - .06;
+  controls.minDistance = 6; controls.maxDistance = 60;
+  raycaster = new THREE.Raycaster(); pointer = new THREE.Vector2();
+  clock = new THREE.Clock();
+
+  ambLight = new THREE.AmbientLight(0x5a4a7a, .55); scene.add(ambLight);
+  dirLight = new THREE.DirectionalLight(0x8a7ab8, .5);
+  dirLight.position.set(-10, 20, -8); scene.add(dirLight);
+
+  // 地面
+  ground = new THREE.Mesh(new THREE.CircleGeometry(GROUND_R+6, 64),
+    new THREE.MeshLambertMaterial({color:0x2a2140}));
+  ground.rotation.x = -Math.PI/2; scene.add(ground);
+  // 围坐圈浅痕
+  const ring = new THREE.Mesh(new THREE.RingGeometry(CIRCLE_R-1.2, CIRCLE_R+1.2, 64),
+    new THREE.MeshBasicMaterial({color:0x4a3a6a, transparent:true, opacity:.35, side:THREE.DoubleSide}));
+  ring.rotation.x = -Math.PI/2; ring.position.y = .02; scene.add(ring);
+  scene.userData.ring = ring;
+
+  buildCampfire();
+  buildStars();
+  buildDecor();
+  peopleGroup = new THREE.Group(); scene.add(peopleGroup);
+  linesGroup = new THREE.Group(); scene.add(linesGroup);
+  labelGroup = new THREE.Group(); scene.add(labelGroup);
+
+  window.addEventListener('resize', ()=>{
+    camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  });
+  applyTheme(theme);
+  animate();
+}
+
+/* ---- 篝火 ---- */
+let flamePts = [];
+function buildCampfire(){
+  // 木柴
+  const logMat = new THREE.MeshLambertMaterial({color:0x6b4a2f});
+  for(let i=0;i<4;i++){
+    const log = new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,2.6,8), logMat);
+    log.rotation.z = Math.PI/2; log.rotation.y = i*Math.PI/4 + .4;
+    log.position.y = .25; scene.add(log);
+  }
+  // 石圈
+  const stoneMat = new THREE.MeshLambertMaterial({color:0x8a8a92});
+  for(let i=0;i<10;i++){
+    const a = i/10*Math.PI*2;
+    const st = new THREE.Mesh(new THREE.SphereGeometry(.3+Math.random()*.12, 6, 5), stoneMat);
+    st.position.set(Math.cos(a)*1.5, .18, Math.sin(a)*1.5);
+    st.scale.y = .7; scene.add(st);
+  }
+  // 火光
+  fireLight = new THREE.PointLight(0xffa040, 2.4, 26, 1.6);
+  fireLight.position.set(0, 2.2, 0); scene.add(fireLight);
+  // 火苗粒子
+  const N = 90;
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(N*3), col = new Float32Array(N*3);
+  for(let i=0;i<N;i++){
+    flamePts.push({ x:(Math.random()-.5)*.9, y:Math.random()*2.6, z:(Math.random()-.5)*.9,
+      v:.8+Math.random()*1.4, r:Math.random() });
+    const c = new THREE.Color().setHSL(.06+Math.random()*.06, 1, .55+Math.random()*.2);
+    col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  fireParticles = new THREE.Points(geo, new THREE.PointsMaterial({
+    size:.34, vertexColors:true, transparent:true, opacity:.95,
+    blending:THREE.AdditiveBlending, depthWrite:false }));
+  scene.add(fireParticles);
+}
+function buildStars(){
+  const N = 260, pos = new Float32Array(N*3);
+  for(let i=0;i<N;i++){
+    const a=Math.random()*Math.PI*2, e=Math.random()*Math.PI/2.2, r=70+Math.random()*30;
+    pos[i*3]=Math.cos(a)*Math.cos(e)*r; pos[i*3+1]=Math.sin(e)*r; pos[i*3+2]=Math.sin(a)*Math.cos(e)*r;
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  stars = new THREE.Points(g, new THREE.PointsMaterial({color:0xfff6d9, size:.5, transparent:true, opacity:.8}));
+  scene.add(stars);
+}
+
+/* ---- 童话装饰：花草蘑菇月亮云萤火虫 ---- */
+const decor = { clouds:[], fireflies:null, ffSeed:[], moon:null, flowerMats:[], butterfly:null };
+const rand = (a,b)=>a+Math.random()*(b-a);
+function scatterR(min,max){ const a=Math.random()*Math.PI*2, r=rand(min,max); return [Math.cos(a)*r, Math.sin(a)*r]; }
+function buildDecor(){
+  // 月亮（夜）：月牙 = 两个圆叠在画布上
+  const mcv = document.createElement('canvas'); mcv.width=mcv.height=128;
+  const mc = mcv.getContext('2d');
+  mc.fillStyle='#ffe9a8'; mc.beginPath(); mc.arc(64,64,44,0,Math.PI*2); mc.fill();
+  mc.globalCompositeOperation='destination-out';
+  mc.beginPath(); mc.arc(84,50,38,0,Math.PI*2); mc.fill();
+  moon = new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(mcv), transparent:true, depthWrite:false}));
+  moon.position.set(-26, 26, -34); moon.scale.set(9,9,1); scene.add(moon);
+  decor.moon = moon;
+
+  // 云（昼）
+  const cloudMat = new THREE.MeshLambertMaterial({color:0xffffff, transparent:true, opacity:.92});
+  for(let i=0;i<5;i++){
+    const cl = new THREE.Group();
+    for(let j=0;j<4;j++){
+      const s = new THREE.Mesh(new THREE.SphereGeometry(rand(.9,1.7), 10, 8), cloudMat);
+      s.position.set(j*1.4-2 + rand(-.3,.3), rand(-.3,.3), rand(-.5,.5));
+      s.scale.y = .6; cl.add(s);
+    }
+    cl.position.set(rand(-30,30), rand(15,24), rand(-30,30));
+    scene.add(cl); decor.clouds.push(cl);
+  }
+
+  // 花（两主题都显示，配色不同）
+  const stemMat = new THREE.MeshLambertMaterial({color:0x5a8a4a});
+  const petalCols = [0xff9fbb, 0xffd166, 0xffffff, 0xb19cd9, 0xff6b9d];
+  for(let i=0;i<26;i++){
+    const [x,z] = scatterR(CIRCLE_R+2.2, GROUND_R+4.5);
+    const f = new THREE.Group();
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.9,5), stemMat);
+    stem.position.y = .45; f.add(stem);
+    const pm = new THREE.MeshLambertMaterial({color:petalCols[i%petalCols.length]});
+    decor.flowerMats.push(pm);
+    for(let j=0;j<5;j++){
+      const pe = new THREE.Mesh(new THREE.SphereGeometry(.16, 6, 5), pm);
+      const a = j/5*Math.PI*2;
+      pe.position.set(Math.cos(a)*.2, .95, Math.sin(a)*.2); pe.scale.z=.5; f.add(pe);
+    }
+    const core = new THREE.Mesh(new THREE.SphereGeometry(.13,6,5), new THREE.MeshLambertMaterial({color:0xfff1a8}));
+    core.position.y = .98; f.add(core);
+    f.position.set(x, 0, z); f.scale.setScalar(rand(.7,1.3));
+    scene.add(f);
+  }
+
+  // 蘑菇（童话感）
+  const mushStem = new THREE.MeshLambertMaterial({color:0xfff5e6});
+  const mushCaps = [0xff6b6b, 0xb19cd9, 0xff9fbb];
+  for(let i=0;i<7;i++){
+    const [x,z] = scatterR(CIRCLE_R+3, GROUND_R+4);
+    const m = new THREE.Group();
+    const st = new THREE.Mesh(new THREE.CylinderGeometry(.14,.2,.6,7), mushStem);
+    st.position.y=.3; m.add(st);
+    const cap = new THREE.Mesh(new THREE.SphereGeometry(.45, 10, 7, 0, Math.PI*2, 0, Math.PI/2),
+      new THREE.MeshLambertMaterial({color:mushCaps[i%3]}));
+    cap.position.y=.55; m.add(cap);
+    // 白点点
+    for(let j=0;j<4;j++){
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(.06,5,4), new THREE.MeshBasicMaterial({color:0xffffff}));
+      const a=rand(0,Math.PI*2), r=rand(.15,.35);
+      dot.position.set(Math.cos(a)*r, .75, Math.sin(a)*r); m.add(dot);
+    }
+    m.position.set(x,0,z); m.scale.setScalar(rand(.8,1.6));
+    scene.add(m);
+  }
+
+  // 小栅栏（围一圈童话感）
+  const fenceMat = new THREE.MeshLambertMaterial({color:0xd9b38c});
+  const fenceR = GROUND_R+5.4, nF = 34;
+  for(let i=0;i<nF;i++){
+    const a = i/nF*Math.PI*2;
+    const p = new THREE.Mesh(new THREE.BoxGeometry(.22,.9,.08), fenceMat);
+    p.position.set(Math.cos(a)*fenceR, .45, Math.sin(a)*fenceR);
+    p.rotation.y = -a; scene.add(p);
+  }
+  for(const dy of [.35,.7]){
+    const rail = new THREE.Mesh(new THREE.TorusGeometry(fenceR, .045, 5, 60), fenceMat);
+    rail.rotation.x = Math.PI/2; rail.position.y = dy; scene.add(rail);
+  }
+
+  // 草丛
+  const grassMat = new THREE.MeshLambertMaterial({color:0x5a9a4f});
+  const grassMat2 = new THREE.MeshLambertMaterial({color:0x6fae5e});
+  for(let i=0;i<70;i++){
+    const [x,z] = scatterR(2.2, GROUND_R+4.8);
+    const g1 = new THREE.Mesh(new THREE.ConeGeometry(.09, rand(.35,.7), 4), i%2?grassMat:grassMat2);
+    g1.position.set(x, .2, z); g1.rotation.z = rand(-.2,.2); g1.rotation.x = rand(-.2,.2);
+    scene.add(g1);
+  }
+
+  // 萤火虫（夜）
+  const N = 60, fpos = new Float32Array(N*3);
+  for(let i=0;i<N;i++){
+    const [x,z] = scatterR(3, GROUND_R+4);
+    const y = rand(.5, 4.5);
+    fpos[i*3]=x; fpos[i*3+1]=y; fpos[i*3+2]=z;
+    decor.ffSeed.push({x,y,z, p:rand(0,Math.PI*2), s:rand(.3,.9)});
+  }
+  const fg = new THREE.BufferGeometry();
+  fg.setAttribute('position', new THREE.BufferAttribute(fpos, 3));
+  decor.fireflies = new THREE.Points(fg, new THREE.PointsMaterial({
+    color:0xcfff9a, size:.22, transparent:true, opacity:.9,
+    blending:THREE.AdditiveBlending, depthWrite:false }));
+  scene.add(decor.fireflies);
+
+  // 蝴蝶（昼，两只绕场飞）
+  decor.butterfly = new THREE.Group();
+  for(const c of [0xff9fbb, 0xb19cd9]){
+    const b = new THREE.Group();
+    const wm = new THREE.MeshBasicMaterial({color:c, side:THREE.DoubleSide, transparent:true, opacity:.95});
+    const w1 = new THREE.Mesh(new THREE.CircleGeometry(.22, 8), wm); w1.position.x=-.2;
+    const w2 = new THREE.Mesh(new THREE.CircleGeometry(.22, 8), wm); w2.position.x=.2;
+    b.add(w1); b.add(w2); b.userData.wings=[w1,w2];
+    decor.butterfly.add(b);
+  }
+  scene.add(decor.butterfly);
+}
+
+/* ---- 人物：圆嘟嘟 Q 版坐姿小动物（程序化建模，大头短身） ---- */
+const mixers = []; // 占位（待机动画改用顶点摇晃，见 animate）
+
+/* 名牌：左侧圆形头像 + 右侧名字 */
+function tagTexture(p){
+  const cv = document.createElement('canvas'); cv.width=340; cv.height=88;
+  const ctx = cv.getContext('2d');
+  const sel = selectedId===p.id;
+  ctx.fillStyle = sel ? 'rgba(242,103,143,.95)' : 'rgba(30,24,40,.82)';
+  roundRect(ctx, 4, 8, 332, 72, 36); ctx.fill();
+  if(sel){ ctx.lineWidth=4; ctx.strokeStyle='#ffe9f0'; ctx.stroke(); }
+  // 头像圆
+  ctx.save();
+  ctx.beginPath(); ctx.arc(50, 44, 30, 0, Math.PI*2); ctx.clip();
+  ctx.fillStyle='#ffe3ec'; ctx.fillRect(20,14,60,60);
+  if(p._img && p._img.complete && p._img.naturalWidth){
+    const im=p._img, s=Math.max(60/im.width,60/im.height);
+    ctx.drawImage(im, 50-im.width*s/2, 44-im.height*s/2, im.width*s, im.height*s);
+  }else{
+    ctx.fillStyle='#f2678f'; ctx.font='bold 30px "ZCOOL KuaiLe",sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText((p.id||"?").slice(0,1), 50, 46);
+  }
+  ctx.restore();
+  ctx.beginPath(); ctx.arc(50, 44, 30, 0, Math.PI*2);
+  ctx.lineWidth=3; ctx.strokeStyle='rgba(255,255,255,.85)'; ctx.stroke();
+  // 名字
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 34px "ZCOOL KuaiLe",sans-serif';
+  ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText(p.id + (p.name ? '·'+p.name : ''), 92, 46);
+  const t = new THREE.CanvasTexture(cv); t.minFilter = THREE.LinearFilter;
+  return t;
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+/* 圆嘟嘟坐姿小动物：面向 +Z，大头短身小短腿 */
+function makeCritter(p, i){
+  const g = new THREE.Group();
+  const sp = p.species || (p.species = randomSpecies());
+  const col = (p.color!=null) ? p.color : (p.color = randomColor());
+  const mat = new THREE.MeshLambertMaterial({color:col});
+  const cream = new THREE.MeshLambertMaterial({color:0xfffaf2});
+  const pink = new THREE.MeshLambertMaterial({color:0xffb7c5});
+  // 梨形身体（端坐）
+  const body = new THREE.Mesh(new THREE.SphereGeometry(.88, 20, 16), mat);
+  body.position.y = .82; body.scale.set(1, .88, .82); g.add(body);
+  // 白肚皮
+  const belly = new THREE.Mesh(new THREE.SphereGeometry(.58, 14, 10), cream);
+  belly.position.set(0, .72, .42); belly.scale.set(.8, .75, .45); g.add(belly);
+  // 大头（头身比 1:1，三丽鸥比例）
+  const head = new THREE.Mesh(new THREE.SphereGeometry(.86, 20, 16), mat);
+  head.position.y = 2.1; head.scale.set(1.06, .98, .96); g.add(head);
+  g.userData.head = head;
+  // 耳朵（按物种）——每只耳朵挂在"耳根枢轴"上，摆动绕耳根转，永远贴合脑袋
+  const ears = [];
+  function earPivot(bx, by, bz, rz, build){
+    const piv = new THREE.Group();
+    piv.position.set(bx, by, bz); piv.rotation.z = rz;
+    build(piv);
+    g.add(piv); ears.push(piv);
+  }
+  if(sp==='bunny'){
+    // 垂耳兔：两只长耳下垂
+    for(const s of [-1,1]){
+      earPivot(s*.42, 2.68, .2, -s*2.1, piv=>{
+        const e = new THREE.Mesh(new THREE.SphereGeometry(.22, 12, 10), mat);
+        e.scale.set(.8, 2.6, .6); e.position.set(0, .32, 0); e.rotation.x = .06;
+        piv.add(e);
+        const ie = new THREE.Mesh(new THREE.SphereGeometry(.11, 8, 6), pink);
+        ie.scale.set(.7, 2.2, .35); ie.position.set(s*.02, .3, .13);
+        piv.add(ie);
+      });
+    }
+  }else if(sp==='dog'){
+    // 小狗：两侧垂耳
+    for(const s of [-1,1]){
+      earPivot(s*.68, 2.55, 0, s*.5, piv=>{
+        const e = new THREE.Mesh(new THREE.SphereGeometry(.26, 12, 10), mat);
+        e.scale.set(.7, 1.6, .55); e.position.set(0, -.32, 0);
+        piv.add(e);
+      });
+    }
+  }else if(sp==='cat'){
+    // 小猫：尖耳 + 粉内耳
+    for(const s of [-1,1]){
+      earPivot(s*.5, 2.6, 0, -s*.18, piv=>{
+        const e = new THREE.Mesh(new THREE.ConeGeometry(.3, .62, 8), mat);
+        e.position.set(0, .28, 0); piv.add(e);
+        const ie = new THREE.Mesh(new THREE.ConeGeometry(.16, .34, 8), pink);
+        ie.position.set(-s*.02, .22, .1); piv.add(ie);
+      });
+    }
+  }else if(sp==='bear'){
+    // 小熊：圆耳朵
+    for(const s of [-1,1]){
+      earPivot(s*.55, 2.58, 0, 0, piv=>{
+        const e = new THREE.Mesh(new THREE.SphereGeometry(.3, 12, 10), mat);
+        e.position.set(0, .22, 0); piv.add(e);
+        const ie = new THREE.Mesh(new THREE.SphereGeometry(.16, 8, 6), cream);
+        ie.position.set(0, .22, .18); piv.add(ie);
+      });
+    }
+  }else{
+    // 小狐狸：大尖耳 + 白色耳尖
+    for(const s of [-1,1]){
+      earPivot(s*.48, 2.6, 0, -s*.2, piv=>{
+        const e = new THREE.Mesh(new THREE.ConeGeometry(.34, .85, 8), mat);
+        e.position.set(0, .4, 0); piv.add(e);
+        const tip = new THREE.Mesh(new THREE.ConeGeometry(.15, .3, 8), cream);
+        tip.position.set(0, .72, 0); piv.add(tip);
+      });
+    }
+  }
+  g.userData.ears = ears;
+  ears.forEach(e=>{ e.userData.rz = e.rotation.z; });
+  // 小手手（抱在肚前）
+  for(const s of [-1,1]){
+    const a = new THREE.Mesh(new THREE.SphereGeometry(.24, 10, 8), mat);
+    a.position.set(s*.55, .85, .68); g.add(a);
+  }
+  // 小短腿前伸
+  for(const s of [-1,1]){
+    const f = new THREE.Mesh(new THREE.SphereGeometry(.3, 12, 10), mat);
+    f.scale.set(.9, .6, 1.3); f.position.set(s*.44, .28, .72); g.add(f);
+  }
+  // 尾巴
+  if(sp==='fox'){
+    const tail = new THREE.Mesh(new THREE.SphereGeometry(.4, 12, 10), mat);
+    tail.scale.set(.7, .9, 1.6); tail.position.set(-.55, .5, -.85); tail.rotation.x = -.5; g.add(tail);
+    const tip = new THREE.Mesh(new THREE.SphereGeometry(.22, 10, 8), cream);
+    tip.scale.set(.7, .8, 1); tip.position.set(-.55, .25, -1.35); g.add(tip);
+  }else if(sp==='cat'){
+    const tail = new THREE.Mesh(new THREE.CylinderGeometry(.1, .13, 1.1, 8), mat);
+    tail.position.set(-.8, .8, -.5); tail.rotation.z = .5; g.add(tail);
+  }else{
+    const tail = new THREE.Mesh(new THREE.SphereGeometry(.22, 10, 8), cream);
+    tail.position.set(0, .5, -.95); g.add(tail);
+  }
+  // === 真 3D 五官（半嵌进白脸区：眼鼻嘴腮红都贴合曲面） ===
+  // 白色脸区：嵌进头部前侧的扁球
+  const patch = new THREE.Mesh(new THREE.SphereGeometry(.56, 18, 14), cream);
+  patch.scale.set(1, .88, .5); patch.position.set(0, 2.06, .52); g.add(patch);
+  // 眼睛：黑亮球（半嵌）+ 高光点
+  const eyeMat = new THREE.MeshLambertMaterial({color:0x2f242b});
+  const hlMat = new THREE.MeshBasicMaterial({color:0xffffff});
+  for(const s of [-1,1]){
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(.075, 10, 8), eyeMat);
+    eye.scale.set(1, 1.35, .8); eye.position.set(s*.24, 2.18, .83); g.add(eye);
+    const hl = new THREE.Mesh(new THREE.SphereGeometry(.026, 6, 5), hlMat);
+    hl.position.set(s*.24-.03, 2.24, .885); g.add(hl);
+  }
+  // 小粉鼻（半嵌）
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(.045, 8, 6), pink);
+  nose.scale.z = .8; nose.position.set(0, 2.06, .86); g.add(nose);
+  // ω 嘴：两段小弧线贴脸
+  const mouthMat = new THREE.MeshBasicMaterial({color:0x6a4a52});
+  for(const s of [-1,1]){
+    const m = new THREE.Mesh(new THREE.TorusGeometry(.05, .014, 6, 12, Math.PI), mouthMat);
+    m.position.set(s*.05, 1.99, .83); m.rotation.z = Math.PI; m.rotation.x = -.12; g.add(m);
+  }
+  // 腮红（半嵌粉团）
+  const blushMat = new THREE.MeshLambertMaterial({color:0xff9fbb});
+  for(const s of [-1,1]){
+    const b = new THREE.Mesh(new THREE.SphereGeometry(.07, 8, 6), blushMat);
+    b.scale.set(1, .8, .4); b.position.set(s*.4, 2.0, .73); g.add(b);
+  }
+  g.userData.face = patch;  // 标记位（不再换纹理）
+  // 头顶名牌
+  const earTop = sp==='fox' ? 3.5 : sp==='bunny' ? 3.4 : sp==='cat' ? 3.3 : sp==='bear' ? 3.2 : 2.9;
+  const tag = new THREE.Sprite(new THREE.SpriteMaterial({map:tagTexture(p), transparent:true, depthWrite:false}));
+  tag.position.set(0, earTop + .7, 0); tag.scale.set(3.4, .88, 1);
+  g.add(tag); g.userData.tag = tag;
+  g.userData.id = p.id;
+  g.userData.species = sp;
+  g.userData.height = earTop;
+  g.userData.phase = Math.random()*Math.PI*2;   // 待机摇晃相位
+  return g;
+}
+function disposeGroup(g){
+  g.traverse(o=>{
+    if(o.geometry) o.geometry.dispose();
+    if(o.material){
+      (Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{ m.map&&m.map.dispose(); m.dispose(); });
+    }
+  });
+}
+function refreshSprite(p){ // 刷新名牌（头像在名牌里）
+  const g = sprites[p.id]; if(!g) return;
+  const tag = g.userData.tag;
+  if(tag){ const t2 = tagTexture(p); tag.material.map.dispose(); tag.material.map = t2; tag.material.needsUpdate = true; }
+}
+function loadAvatarImg(p){
+  if(!p.avatar){ refreshSprite(p); return; }
+  if(p._img && p._img._src===p.avatar){ refreshSprite(p); return; }
+  const img = new Image(); img.crossOrigin = 'anonymous'; img._src = p.avatar;
+  img.onload = ()=>{ p._img = img; refreshSprite(p); };
+  img.onerror = ()=>{ p._img = null; refreshSprite(p); };
+  p._img = img; img.src = p.avatar;
+  refreshSprite(p);
+}
+function faceCenter(g, x, z){ g.rotation.y = Math.atan2(-x, -z); g.userData.baseRot = g.rotation.y; }
+function personPos(p, i){
+  if(p.x!=null && p.z!=null) return {x:p.x, z:p.z};
+  const n = data.people.length;
+  const a = (i/n)*Math.PI*2 - Math.PI/2;
+  return { x: Math.cos(a)*CIRCLE_R, z: Math.sin(a)*CIRCLE_R };
+}
+function rebuildPeople(){
+  Object.values(sprites).forEach(g=>{ peopleGroup.remove(g); disposeGroup(g); });
+  for(const k in sprites) delete sprites[k];
+  data.people.forEach((p,i)=>{
+    const g = makeCritter(p, i);
+    const pos = personPos(p, i);
+    g.position.set(pos.x, 0, pos.z);
+    faceCenter(g, pos.x, pos.z);
+    peopleGroup.add(g); sprites[p.id] = g;
+    loadAvatarImg(p);
+  });
+  rebuildLines();
+}
+
+/* ---- 关系线 ---- */
+function rebuildLines(){
+  edgeLines.length = 0;
+  while(linesGroup.children.length){
+    const l = linesGroup.children.pop();
+    l.geometry.dispose(); l.material.dispose();
+  }
+  labelGroup.children.slice().forEach(s=>{ labelGroup.remove(s); s.material.map&&s.material.map.dispose(); s.material.dispose(); });
+  // 人对分组（多条关系错层）
+  const groups = new Map();
+  data.edges.forEach(e=>{
+    if(!sprites[e.a] || !sprites[e.b]) return;
+    const key = [e.a,e.b].sort().join('|');
+    if(!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(e);
+  });
+  groups.forEach(list=>{
+    list.forEach((e, idx)=>{
+      const A = sprites[e.a].position, B = sprites[e.b].position;
+      const hA = (sprites[e.a].userData.height||2.9), hB = (sprites[e.b].userData.height||2.9);
+      const top = new THREE.Vector3(A.x, A.y+hA, A.z), topB = new THREE.Vector3(B.x, B.y+hB, B.z);
+      // 控制点：向篝火中心收 + 抬高，多条关系逐层抬高
+      const mid = top.clone().add(topB).multiplyScalar(.5);
+      const ctrl = new THREE.Vector3(mid.x*.25, 8 + top.distanceTo(topB)*.28 + idx*1.4, mid.z*.25);
+      const curve = new THREE.QuadraticBezierCurve3(top, ctrl, topB);
+      const geo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(40));
+      const lit = selectedId && (e.a===selectedId || e.b===selectedId);
+      const op = selectedId ? (lit ? .95 : .06) : .14;
+      const mat = e.type==='biwai'
+        ? new THREE.LineDashedMaterial({ color:REL_COLOR[e.type], transparent:true, opacity:op, dashSize:.5, gapSize:.32, linewidth:2 })
+        : new THREE.LineBasicMaterial({ color:REL_COLOR[e.type], transparent:true, opacity:op, linewidth:2 });
+      const line = new THREE.Line(geo, mat);
+      if(e.type==='biwai') line.computeLineDistances();
+      line.userData.edge = e; linesGroup.add(line);
+      const midPt = curve.getPoint(.5);
+      edgeLines.push({line, edge:e, mid:midPt});
+      // 有向关系（师徒/编外师徒）：线中后段加箭头锥，指向徒弟
+      if(REL_DIR[e.type]){
+        const pA = curve.getPoint(.62), tan = curve.getTangent(.62).normalize();
+        const cone = new THREE.Mesh(
+          new THREE.ConeGeometry(.2, .55, 8),
+          new THREE.MeshBasicMaterial({ color:REL_COLOR[e.type], transparent:true, opacity:op }));
+        cone.position.copy(pA);
+        cone.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), tan);
+        cone.userData.edge = e; linesGroup.add(cone);
+      }
+      // 点亮时加关系名飘签
+      if(lit){
+        const cv = document.createElement('canvas'); cv.width=160; cv.height=64;
+        const c2 = cv.getContext('2d');
+        c2.font = 'bold 40px "ZCOOL KuaiLe",sans-serif'; c2.textAlign='center'; c2.textBaseline='middle';
+        c2.shadowColor='rgba(0,0,0,.6)'; c2.shadowBlur=8;
+        c2.fillStyle = REL_CSS[e.type]; c2.fillText(REL_NAME[e.type], 80, 34);
+        const t = new THREE.CanvasTexture(cv);
+        const lab = new THREE.Sprite(new THREE.SpriteMaterial({map:t, transparent:true, depthTest:false}));
+        lab.position.copy(midPt); lab.scale.set(2.2,.88,1);
+        labelGroup.add(lab);
+      }
+    });
+  });
+}
+function highlight(){ rebuildLines(); Object.values(sprites).forEach(sp=>refreshSprite(person(sp.userData.id))); }
+
+/* ================= 主题 ================= */
+function applyTheme(t){
+  theme = t;
+  document.body.className = 'theme-'+t + (editMode?'':' view');
+  const T = THEMES[t];
+  scene.background = new THREE.Color(T.bg);
+  scene.fog = new THREE.Fog(T.fog, 40, 110);
+  ground.material.color.setHex(T.ground);
+  scene.userData.ring.material.color.setHex(T.ring);
+  ambLight.color.setHex(T.amb); ambLight.intensity = T.ambI;
+  dirLight.color.setHex(T.moonLight); dirLight.intensity = T.dirI;
+  fireLight.intensity = T.fireI;
+  stars.visible = T.stars;
+  // 装饰昼夜切换：夜=月亮+萤火虫，昼=云+蝴蝶
+  const night = t==='night';
+  if(decor.moon) decor.moon.visible = night;
+  if(decor.fireflies) decor.fireflies.visible = night;
+  decor.clouds.forEach(c=>c.visible = !night);
+  if(decor.butterfly) decor.butterfly.visible = !night;
+  document.getElementById('themeBtn').textContent = night ? '🌙' : '☀️';
+  Object.values(sprites).forEach(sp=>refreshSprite(person(sp.userData.id)));
+}
+document.getElementById('themeBtn').onclick = ()=>applyTheme(theme==='night'?'day':'night');
+
+/* ================= 指针交互 ================= */
+let downPos = null, dragTarget = null, moved = false;
+const groundPlane = new THREE.Plane(new THREE.Vector3(0,1,0), 0);
+function toNDC(e){
+  const r = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((e.clientX-r.left)/r.width)*2-1;
+  pointer.y = -((e.clientY-r.top)/r.height)*2+1;
+}
+function pickSprite(e){
+  toNDC(e); raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(peopleGroup.children, true);
+  if(!hits.length) return null;
+  // 命中的是小动物身体的某个零件，向上找到整只
+  let o = hits[0].object;
+  while(o && !o.userData.id) o = o.parent;
+  return o;
+}
+function onDown(e){
+  downPos = {x:e.clientX, y:e.clientY}; moved = false;
+  if(editMode){
+    const sp = pickSprite(e);
+    if(sp){ dragTarget = sp; controls.enabled = false; }
+  }
+}
+function onMove(e){
+  if(!downPos) return;
+  if(Math.hypot(e.clientX-downPos.x, e.clientY-downPos.y) > 6) moved = true;
+  if(dragTarget){
+    toNDC(e); raycaster.setFromCamera(pointer, camera);
+    const pt = new THREE.Vector3();
+    if(raycaster.ray.intersectPlane(groundPlane, pt)){
+      const d = Math.hypot(pt.x, pt.z);
+      if(d > GROUND_R){ pt.x *= GROUND_R/d; pt.z *= GROUND_R/d; }
+      dragTarget.position.x = pt.x; dragTarget.position.z = pt.z;
+      rebuildLines();
+    }
+  }
+}
+function onUp(e){
+  if(dragTarget){
+    const p = person(dragTarget.userData.id);
+    if(p && moved){
+      snapshot();
+      p.x = +dragTarget.position.x.toFixed(2);
+      p.z = +dragTarget.position.z.toFixed(2);
+      faceCenter(dragTarget, p.x, p.z);  // 拖完重新面向篝火
+      save(); rebuildLines();
+      toast("位置已记住");
+    }
+    dragTarget = null; controls.enabled = true;
+  }
+  if(downPos && !moved){
+    const sp = pickSprite(e);
+    if(sp) selectPerson(sp.userData.id);
+    else { selectedId = null; closeDrawer(); highlight(); }
+  }
+  downPos = null;
+}
+function bindPointer(){
+  const el = renderer.domElement;
+  el.addEventListener('pointerdown', onDown);
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+}
+
+/* ---- 聚焦 ---- */
+let camTween = null;
+function flyTo(id){
+  const sp = sprites[id]; if(!sp) return;
+  const p = sp.position;
+  const dir = new THREE.Vector3(p.x, 0, p.z).normalize();
+  if(dir.lengthSq()<.01) dir.set(0,0,1);
+  const camTo = new THREE.Vector3(p.x + dir.x*8, 6, p.z + dir.z*8);
+  const tgtTo = new THREE.Vector3(p.x, p.y+2.2, p.z);
+  const c0 = camera.position.clone(), t0 = controls.target.clone();
+  const tStart = performance.now();
+  camTween = ()=>{
+    const r = Math.min(1, (performance.now()-tStart)/700), e2 = 1-Math.pow(1-r,3);
+    camera.position.lerpVectors(c0, camTo, e2);
+    controls.target.lerpVectors(t0, tgtTo, e2);
+    if(r>=1) camTween = null;
+  };
+}
+function selectPerson(id){
+  selectedId = id; highlight(); openDrawer(id); flyTo(id);
+}
+
+/* ================= 抽屉 ================= */
+const drawer = document.getElementById('drawer');
+function openDrawer(id){
+  const p = person(id); if(!p) return;
+  const rels = data.edges.filter(e=>e.a===id||e.b===id);
+  const relHtml = rels.length ? rels.map(e=>{
+    let txt;
+    if(REL_DIR[e.type]){
+      txt = e.a===id ? `${REL_NAME[e.type]} · 徒弟 ${esc(e.b)}` : `${REL_NAME[e.type]} · 师父 ${esc(e.a)}`;
+    }else{
+      const other = e.a===id ? e.b : e.a;
+      txt = `${REL_NAME[e.type]} · ${esc(other)}`;
+    }
+    return `<div class="rel-item"><span class="lg-dot" style="background:${REL_CSS[e.type]}"></span>
+      <span>${txt}</span>
+      <button class="rm edit-only" data-ri="${data.edges.indexOf(e)}" title="解除">✕</button></div>`;
+  }).join("") : `<div style="font-size:12px;color:var(--ink-soft)">暂无关系，去建一条吧</div>`;
+  drawer.innerHTML = `
+    <h3>${esc(p.id)}</h3>
+    <div class="sub">${esc(p.name||"")}${p.species?` · ${SPECIES_NAME[p.species]||p.species}`:""}</div>
+    <div class="drow"><b>关系 ${rels.length} 条</b></div>${relHtml}
+    <div class="acts">
+      <button class="pbtn edit-only" id="dEdit">✏️ 编辑资料</button>
+      <button class="pbtn edit-only" id="dAvatar">🖼 上传头像</button>
+      <button class="pbtn edit-only" id="dRel">🔗 建关系</button>
+      ${p.x!=null?`<button class="pbtn edit-only" id="dDock">↺ 回到圆圈位</button>`:""}
+      <button class="pbtn danger edit-only" id="dDel">🗑 移出营地</button>
+    </div>
+    <div class="acts"><button class="pbtn" id="dClose" style="width:100%">关闭</button></div>`;
+  drawer.classList.add('open');
+  drawer.querySelectorAll('.rm').forEach(b=>b.onclick=()=>{
+    snapshot(); data.edges.splice(+b.dataset.ri,1); save(); rebuildLines(); openDrawer(id); toast("关系已解除");
+  });
+  document.getElementById('dEdit').onclick = ()=>openPersonModal(id);
+  document.getElementById('dAvatar').onclick = ()=>{
+    const ip = document.createElement('input'); ip.type='file'; ip.accept='image/*';
+    ip.onchange = ev=>{ const f=ev.target.files[0]; if(f) uploadAvatar(id, f); };
+    ip.click();
+  };
+  document.getElementById('dRel').onclick = ()=>openRelModal(id);
+  const dd = document.getElementById('dDock');
+  if(dd) dd.onclick = ()=>{ snapshot(); p.x=null; p.z=null; save(); rebuildPeople(); openDrawer(id); toast("已回到圆圈位"); };
+  document.getElementById('dDel').onclick = ()=>{
+    if(!confirm(`将「${id}」移出营地？其关系一并解除。`)) return;
+    snapshot();
+    data.people = data.people.filter(x=>x.id!==id);
+    data.edges = data.edges.filter(e=>e.a!==id&&e.b!==id);
+    selectedId=null; save(); closeDrawer(); rebuildPeople(); toast("已移出");
+  };
+  document.getElementById('dClose').onclick = closeDrawer;
+}
+function closeDrawer(){ drawer.classList.remove('open'); }
+
+/* ================= 弹窗 ================= */
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function fillPersonSelect(sel, pre){
+  sel.innerHTML = data.people.map(p=>`<option value="${esc(p.id)}" ${p.id===pre?"selected":""}>${esc(p.id)}</option>`).join("");
+}
+function openPersonModal(editId){
+  document.getElementById('pmTitle').textContent = editId ? `编辑 · ${editId}` : "新伙伴";
+  const p = editId ? person(editId) : null;
+  pmId.value = p?p.id:""; pmId.disabled = !!p;
+  pmName.value = p?p.name||"":""; pmAvatar.value = p?p.avatar||"":"";
+  document.getElementById('personModal').dataset.edit = editId||"";
+  openModal('personModal');
+}
+document.getElementById('pmSave').onclick = ()=>{
+  const editId = document.getElementById('personModal').dataset.edit;
+  const id = pmId.value.trim();
+  if(!id){ toast("名字不能为空"); return; }
+  snapshot();
+  let p;
+  if(editId){ p = person(editId); }
+  else{
+    if(person(id)){ toast("名字已存在"); undoStack.pop(); return; }
+    p = { id, x:null, z:null, species:randomSpecies(), color:randomColor() }; data.people.push(p);
+  }
+  p.name = pmName.value.trim(); p.avatar = pmAvatar.value.trim();
+  if(p.avatar !== p._img?._src) p._img = null;
+  save(); closeModal('personModal'); rebuildPeople();
+  if(selectedId===p.id) openDrawer(p.id);
+  toast(editId?"已保存":"欢迎新伙伴 🔥");
+};
+function updateRelLabels(){
+  const dir = REL_DIR[rmType.value];
+  document.getElementById('rmALabel').textContent = dir ? '师父（线的起点）' : '伙伴 A';
+  document.getElementById('rmBLabel').textContent = dir ? '徒弟（箭头指向 TA）' : '伙伴 B';
+  document.getElementById('rmHint').textContent = dir ? '有向关系：线上箭头 师 → 徒' : '';
+}
+function openRelModal(preA){
+  if(data.people.length<2){ toast("至少两人才能结谊"); return; }
+  fillPersonSelect(document.getElementById('rmA'), preA);
+  fillPersonSelect(document.getElementById('rmB'));
+  updateRelLabels();
+  openModal('relModal');
+}
+document.getElementById('rmType').onchange = updateRelLabels;
+document.getElementById('rmSave').onclick = ()=>{
+  const a = rmA.value, b = rmB.value, type = rmType.value;
+  if(a===b){ toast("不能选同一人"); return; }
+  if(data.edges.some(e=>e.a===a&&e.b===b&&e.type===type)){ toast("此关系已存在"); return; }
+  if(REL_DIR[type] && data.edges.some(e=>e.a===b&&e.b===a&&e.type===type)){ toast("已存在反向的同类关系，先解除再建"); return; }
+  snapshot(); data.edges.push({a,b,type});
+  save(); closeModal('relModal'); rebuildLines();
+  if(selectedId) highlight(), openDrawer(selectedId);
+  toast("关系已建立 🎀");
+};
+
+/* ================= 搜索 ================= */
+document.getElementById('search').addEventListener('input', e=>{
+  const k = e.target.value.trim();
+  searchHits = new Set(k ? data.people.filter(p=>p.id.includes(k)||(p.name||"").includes(k)).map(p=>p.id) : []);
+  Object.entries(sprites).forEach(([id, sp])=>{
+    const hit = searchHits.has(id);
+    const target = hit ? 1.3 : 1;
+    sp.scale.setScalar(target);
+  });
+});
+document.getElementById('search').addEventListener('keydown', e=>{
+  if(e.key==='Enter' && searchHits.size) selectPerson([...searchHits][0]);
+});
+
+/* ================= 顶栏/面板 ================= */
+document.getElementById('sealBtn').onclick = ()=>document.getElementById('panel').classList.toggle('open');
+document.getElementById('modeBtn').onclick = ()=>{
+  editMode = !editMode;
+  document.body.classList.toggle('view', !editMode);
+  document.getElementById('modeBtn').textContent = editMode ? '👁 观察' : '✎ 编辑';
+  document.getElementById('hint').textContent = editMode
+    ? '编辑模式：拖动伙伴可摆位置 · 点头像看关系' : '拖动旋转 · 滚轮缩放 · 点小伙伴聚焦';
+  if(selectedId) openDrawer(selectedId);
+  toast(editMode ? '编辑模式：可拖人、改关系' : '观察模式：随意转转看看');
+};
+document.getElementById('undoBtn').onclick = undo;
+document.addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='z'){ e.preventDefault(); undo(); } });
+document.getElementById('addPerson').onclick = ()=>openPersonModal(null);
+document.getElementById('addRel').onclick = ()=>openRelModal(null);
+
+/* ================= 导入导出 ================= */
+document.getElementById('exportBtn').onclick = ()=>{
+  const blob = new Blob([JSON.stringify(data,null,1)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = '篝火营地数据.json'; a.click();
+  URL.revokeObjectURL(a.href); toast("已导出");
+};
+document.getElementById('importBtn').onclick = ()=>{
+  const ip = document.createElement('input'); ip.type='file'; ip.accept='.json';
+  ip.onchange = e=>{
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ev=>{
+      try{
+        const d = JSON.parse(ev.target.result);
+        if(!d.people || !d.edges) throw 0;
+        snapshot(); data = d; save(); selectedId=null; closeDrawer();
+        rebuildPeople(); toast("导入完成 🔥");
+      }catch{ alert("文件格式无法识别"); }
+    };
+    r.readAsText(f);
+  };
+  ip.click();
+};
+document.getElementById('resetBtn').onclick = ()=>{
+  if(!confirm("放弃当前全部修改，恢复示例数据？")) return;
+  snapshot(); data = JSON.parse(JSON.stringify(INITIAL_DATA));
+  selectedId=null; save(); closeDrawer(); rebuildPeople(); toast("已恢复示例数据");
+};
+
+/* ================= 渲染循环 ================= */
+function animate(){
+  requestAnimationFrame(animate);
+  const dt = clock.getDelta();
+  const t = (animate._t = (animate._t||0) + dt);
+  // 小动物待机动画
+  for(const m of mixers) m.update(dt);
+  // 火苗上升
+  const posAttr = fireParticles.geometry.attributes.position;
+  for(let i=0;i<flamePts.length;i++){
+    const f = flamePts[i];
+    f.y += f.v * .03;
+    if(f.y > 2.6){ f.y = .2; f.x = (Math.random()-.5)*.9; f.z = (Math.random()-.5)*.9; }
+    posAttr.setXYZ(i, f.x*(1-f.y/3.2), f.y+.4, f.z*(1-f.y/3.2));
+  }
+  posAttr.needsUpdate = true;
+  // 火光摇曳
+  fireLight.intensity = THEMES[theme].fireI + Math.sin(t*11)*.35 + Math.sin(t*23+1)*.2;
+  // 萤火虫游荡
+  if(decor.fireflies && decor.fireflies.visible){
+    const fa = decor.fireflies.geometry.attributes.position;
+    decor.ffSeed.forEach((f,i)=>{
+      fa.setXYZ(i,
+        f.x + Math.sin(t*f.s + f.p)*1.2,
+        f.y + Math.sin(t*f.s*1.7 + f.p*2)*.6,
+        f.z + Math.cos(t*f.s + f.p)*1.2);
+    });
+    fa.needsUpdate = true;
+    decor.fireflies.material.opacity = .5 + Math.sin(t*3)*.35;
+  }
+  // 云漂移
+  decor.clouds.forEach((c,i)=>{
+    if(!c.visible) return;
+    c.position.x += .008 + i*.002;
+    if(c.position.x > 38) c.position.x = -38;
+  });
+  // 蝴蝶扑翼绕飞
+  if(decor.butterfly && decor.butterfly.visible){
+    decor.butterfly.children.forEach((b,i)=>{
+      const ph = t*.5 + i*2.4;
+      b.position.set(Math.cos(ph)*(CIRCLE_R+3.5), 2.2 + Math.sin(t*1.8+i)*.8, Math.sin(ph)*(CIRCLE_R+3.5));
+      b.rotation.y = -ph;
+      const flap = Math.sin(t*14+i)*.9;
+      b.userData.wings[0].rotation.y =  flap;
+      b.userData.wings[1].rotation.y = -flap;
+    });
+  }
+  // 小动物待机：轻晃 + 耳朵抖；选中：开心跳
+  Object.values(sprites).forEach(g=>{
+    const ph = g.userData.phase||0;
+    if(g.userData.id===selectedId){
+      const hop = Math.abs(Math.sin(t*4.5));
+      g.position.y = hop*.5;
+      g.rotation.z = Math.sin(t*4.5)*.06;
+      (g.userData.ears||[]).forEach((e,i)=>{
+        e.rotation.z = (e.userData.rz||0) + Math.sin(t*9+i)*.3;
+      });
+    }else{
+      g.position.y = 0;
+      g.rotation.z = Math.sin(t*1.1+ph)*.05;
+      g.rotation.y = (g.userData.baseRot||0) + Math.sin(t*.8+ph)*.09;
+      (g.userData.ears||[]).forEach((e,i)=>{
+        e.rotation.z = (e.userData.rz||0) + Math.sin(t*2.6+ph+i)*.08;
+      });
+    }
+  });
+  // 平时缓慢自转
+  controls.autoRotate = !selectedId && !editMode;
+  controls.autoRotateSpeed = .5;
+  if(camTween) camTween();
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+/* ================= 启动 ================= */
+try{
+  if(typeof THREE === 'undefined') throw new Error('3D 引擎未加载');
+  init3D();
+  bindPointer();
+  rebuildPeople();
+}catch(e){
+  document.getElementById('hint').textContent = '⚠ 3D 引擎加载失败，请检查 lib 目录后刷新';
+  console.error(e);
+}
+updateCloudStatus();
+refreshRemote();
 </script>
 </body>
 </html>
