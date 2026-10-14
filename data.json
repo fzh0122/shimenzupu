@@ -31,9 +31,9 @@
    "species": "dog",
    "color": 16115408,
    "name": "",
-   "avatar": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791992639816",
+   "avatar": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791994872096",
    "_img": {
-    "_src": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791992639816"
+    "_src": "avatars/%E7%87%95%E5%B1%B1%E6%99%A6%E6%98%8E.jpg?v=1791994872096"
    }
   },
   {
@@ -110,8 +110,8 @@
   },
   {
    "id": "祈矅",
-   "x": -7.4,
-   "z": 5.41,
+   "x": -7.39,
+   "z": 5.69,
    "species": "fox",
    "color": 13496038,
    "name": "",
@@ -122,13 +122,15 @@
   },
   {
    "id": "魏惬意",
-   "x": -8.86,
-   "z": 1.07,
+   "x": -9.43,
+   "z": 1.3,
    "species": "dog",
    "color": 16767460,
    "name": "",
-   "avatar": "",
-   "_img": null
+   "avatar": "avatars/%E9%AD%8F%E6%83%AC%E6%84%8F.jpg?v=1791994851922",
+   "_img": {
+    "_src": "avatars/%E9%AD%8F%E6%83%AC%E6%84%8F.jpg?v=1791994851922"
+   }
   },
   {
    "id": "心意",
@@ -137,8 +139,10 @@
    "species": "bear",
    "color": 16767460,
    "name": "",
-   "avatar": "",
-   "_img": null
+   "avatar": "avatars/%E5%BF%83%E6%84%8F.jpg?v=1791994829001",
+   "_img": {
+    "_src": "avatars/%E5%BF%83%E6%84%8F.jpg?v=1791994829001"
+   }
   },
   {
    "id": "雨天易睡",
@@ -147,8 +151,10 @@
    "species": "dog",
    "color": 13165311,
    "name": "",
-   "avatar": "",
-   "_img": null
+   "avatar": "avatars/%E9%9B%A8%E5%A4%A9%E6%98%93%E7%9D%A1.jpg?v=1791994842475",
+   "_img": {
+    "_src": "avatars/%E9%9B%A8%E5%A4%A9%E6%98%93%E7%9D%A1.jpg?v=1791994842475"
+   }
   },
   {
    "id": "林郁城",
