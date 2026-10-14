@@ -150,8 +150,8 @@ body.view .edit-only{display:none!important}
     s.style.animationDelay = (Math.random()*1.4)+'s';
     intro.appendChild(s);
   });
-  setTimeout(()=>intro.classList.add('out'), 2400);
-  setTimeout(()=>intro.remove(), 3300);
+  setTimeout(()=>intro.classList.add('out'), 3900);
+  setTimeout(()=>intro.remove(), 4800);
 })();
 </script>
 
@@ -200,7 +200,7 @@ body.view .edit-only{display:none!important}
 <div class="modal" id="personModal">
   <div class="mbox">
     <h3 id="pmTitle">新伙伴</h3>
-    <label>名字（唯一）</label><input id="pmId">
+    <label>名字（唯一，可随时改，关系自动跟随）</label><input id="pmId">
     <label>备注</label><input id="pmName">
     <label>头像链接</label><input id="pmAvatar" placeholder="https://…（或用抽屉里的上传按钮）">
     <div class="mrow">
@@ -1130,7 +1130,7 @@ function fillPersonSelect(sel, pre){
 function openPersonModal(editId){
   document.getElementById('pmTitle').textContent = editId ? `编辑 · ${editId}` : "新伙伴";
   const p = editId ? person(editId) : null;
-  pmId.value = p?p.id:""; pmId.disabled = !!p;
+  pmId.value = p?p.id:""; pmId.disabled = false;
   pmName.value = p?p.name||"":""; pmAvatar.value = p?p.avatar||"":"";
   document.getElementById('personModal').dataset.edit = editId||"";
   openModal('personModal');
@@ -1141,7 +1141,16 @@ document.getElementById('pmSave').onclick = ()=>{
   if(!id){ toast("名字不能为空"); return; }
   snapshot();
   let p;
-  if(editId){ p = person(editId); }
+  if(editId){
+    p = person(editId);
+    if(id !== editId){
+      if(person(id)){ toast("名字已存在"); undoStack.pop(); return; }
+      // 改名：同步所有关系线里的引用
+      p.id = id;
+      data.edges.forEach(e=>{ if(e.a===editId) e.a=id; if(e.b===editId) e.b=id; });
+      if(selectedId===editId) selectedId = id;
+    }
+  }
   else{
     if(person(id)){ toast("名字已存在"); undoStack.pop(); return; }
     p = { id, x:null, z:null, species:randomSpecies(), color:randomColor() }; data.people.push(p);
